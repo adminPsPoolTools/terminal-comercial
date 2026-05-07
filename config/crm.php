@@ -8,6 +8,11 @@ return [
     |--------------------------------------------------------------------------
     */
     'api_url' => env('CRM_API_URL', 'http://pspool.dyndns.org:10445/ApiGesplanet_TC/public/api/'),
+    'api_url_local' => env('CRM_API_URL_LOCAL'),
+    'api_url_server' => env('CRM_API_URL_SERVER'),
+    'api_fallback_urls' => env('CRM_API_FALLBACK_URLS', ''),
+    'api_fallback_urls_local' => env('CRM_API_FALLBACK_URLS_LOCAL', ''),
+    'api_fallback_urls_server' => env('CRM_API_FALLBACK_URLS_SERVER', ''),
 
     /*
     |--------------------------------------------------------------------------
@@ -15,6 +20,11 @@ return [
     |--------------------------------------------------------------------------
     */
     'ws_rh' => env('CRM_WS_RH', 'http://pspool.dyndns.org:10445/Recursos_humanos_TC'),
+    'ws_rh_local' => env('CRM_WS_RH_LOCAL'),
+    'ws_rh_server' => env('CRM_WS_RH_SERVER'),
+    'ws_rh_fallback_urls' => env('CRM_WS_RH_FALLBACK_URLS', ''),
+    'ws_rh_fallback_urls_local' => env('CRM_WS_RH_FALLBACK_URLS_LOCAL', ''),
+    'ws_rh_fallback_urls_server' => env('CRM_WS_RH_FALLBACK_URLS_SERVER', ''),
 
     /*
     |--------------------------------------------------------------------------
@@ -64,6 +74,20 @@ return [
     |--------------------------------------------------------------------------
     */
     'api_user_agent' => env('CRM_API_USER_AGENT', 'CRM Comercial Ps-pool'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Forzar IPv4 en cURL
+    |--------------------------------------------------------------------------
+    */
+    'api_force_ipv4' => filter_var(env('CRM_API_FORCE_IPV4', false), FILTER_VALIDATE_BOOL),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Reintentar lecturas GET como POST x-www-form-urlencoded
+    |--------------------------------------------------------------------------
+    */
+    'api_read_fallback_post' => filter_var(env('CRM_API_READ_FALLBACK_POST', true), FILTER_VALIDATE_BOOL),
 
     /*
     |--------------------------------------------------------------------------

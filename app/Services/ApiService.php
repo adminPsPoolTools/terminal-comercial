@@ -6,25 +6,29 @@ use Illuminate\Support\Facades\Log;
 
 class ApiService
 {
-    protected string $baseUrl;
-    protected string $rhBaseUrl;
+    protected array $apiBaseUrls;
+    protected array $rhBaseUrls;
     protected int $timeout;
     protected int $connectTimeout;
     protected bool $verifySsl;
     protected string $payloadFormat;
     protected string $transport;
     protected string $userAgent;
+    protected bool $forceIpv4;
+    protected bool $readFallbackPost;
 
     public function __construct()
     {
-        $this->baseUrl = rtrim((string) config('crm.api_url'), '/') . '/';
-        $this->rhBaseUrl = rtrim((string) config('crm.ws_rh'), '/') . '/';
+        $this->apiBaseUrls = $this->resolveBaseUrls('api_url', 'api_fallback_urls');
+        $this->rhBaseUrls = $this->resolveBaseUrls('ws_rh', 'ws_rh_fallback_urls');
         $this->timeout = (int) config('crm.api_timeout', 30);
         $this->connectTimeout = (int) config('crm.api_connect_timeout', 10);
         $this->verifySsl = (bool) config('crm.api_verify_ssl', true);
         $this->payloadFormat = (string) config('crm.api_payload_format', 'form');
         $this->transport = (string) config('crm.api_transport', 'auto');
         $this->userAgent = (string) config('crm.api_user_agent', 'CRM Comercial Ps-pool');
+        $this->forceIpv4 = (bool) config('crm.api_force_ipv4', false);
+        $this->readFallbackPost = (bool) config('crm.api_read_fallback_post', true);
     }
 
     public function get(string $endpoint, array $params = []): mixed
@@ -197,6 +201,23 @@ class ApiService
         return $this->request('GET', $this->makeRhUrl($path), $params, "ApiService::getRH [{$path}]");
     }
 
+    public function probeEndpoint(string $endpoint, array $params = [], bool $rh = false, string $method = 'GET'): array
+    {
+        $url = $rh ? $this->makeRhUrl($endpoint) : $this->makeApiUrl($endpoint);
+        $result = $this->performRequest(strtoupper($method), $url, $params, false);
+
+        return [
+            'ok' => $result['ok'],
+            'final_method' => $result['method'],
+            'final_url' => $result['url'],
+            'final_transport' => $result['transport'],
+            'status' => $result['status'],
+            'error' => $result['error'],
+            'body_preview' => $this->truncateBody($result['body'] ?? ''),
+            'attempts' => $result['attempts'],
+        ];
+    }
+
     protected function getItem(string $endpoint, array $params = []): ?object
     {
         return $this->normalizeItem($this->get($endpoint, $params));
@@ -205,64 +226,122 @@ class ApiService
     protected function request(string $method, string $url, array $data = [], ?string $logContext = null): mixed
     {
         $logContext ??= 'ApiService::' . strtolower($method) . ' [' . $this->extractEndpoint($url) . ']';
+        $result = $this->performRequest($method, $url, $data, true, $logContext);
 
-        try {
-            $response = $this->send($method, $url, $data);
-        } catch (\Throwable $e) {
-            Log::error($logContext . ' ' . $e->getMessage(), ['url' => $url]);
-            return null;
-        }
-
-        if (! $this->isSuccessfulStatus($response['status'])) {
-            Log::warning($logContext . " HTTP {$response['status']}", [
-                'url' => $response['url'],
-                'transport' => $response['transport'],
-                'body' => $this->truncateBody($response['body']),
-            ]);
-
-            return null;
-        }
-
-        return $this->decodeResponse($response['body'], $logContext, $response['url']);
+        return $result['ok'] ? $result['decoded'] : null;
     }
 
     protected function requestSuccessful(string $method, string $url, array $data = [], ?string $logContext = null): bool
     {
         $logContext ??= 'ApiService::' . strtolower($method) . ' [' . $this->extractEndpoint($url) . ']';
+        $result = $this->performRequest($method, $url, $data, true, $logContext);
 
-        try {
-            $response = $this->send($method, $url, $data);
-        } catch (\Throwable $e) {
-            Log::error($logContext . ' ' . $e->getMessage(), ['url' => $url]);
-            return false;
-        }
-
-        if ($this->isSuccessfulStatus($response['status'])) {
-            return true;
-        }
-
-        Log::warning($logContext . " HTTP {$response['status']}", [
-            'url' => $response['url'],
-            'transport' => $response['transport'],
-            'body' => $this->truncateBody($response['body']),
-        ]);
-
-        return false;
+        return $result['ok'];
     }
 
-    protected function send(string $method, string $url, array $data = []): array
+    protected function performRequest(string $method, string $url, array $data = [], bool $logFailures = true, ?string $logContext = null): array
     {
-        $prepared = $this->prepareRequest($method, $url, $data);
+        $logContext ??= 'ApiService::' . strtolower($method) . ' [' . $this->extractEndpoint($url) . ']';
+        $attempts = [];
+        $lastFailure = [
+            'ok' => false,
+            'status' => 0,
+            'body' => '',
+            'url' => $url,
+            'transport' => null,
+            'method' => strtoupper($method),
+            'decoded' => null,
+            'error' => null,
+            'attempts' => [],
+        ];
 
-        if ($this->transport !== 'stream' && function_exists('curl_init')) {
-            return $this->sendWithCurl($prepared);
+        foreach ($this->candidateMethods($method) as $candidateMethod) {
+            foreach ($this->candidateUrls($url) as $candidateUrl) {
+                foreach ($this->candidateTransports() as $transport) {
+                    $prepared = $this->prepareRequest($candidateMethod, $candidateUrl, $data);
+
+                    try {
+                        $response = $this->sendPrepared($prepared, $transport);
+                    } catch (\Throwable $e) {
+                        $attempts[] = [
+                            'method' => $candidateMethod,
+                            'url' => $prepared['url'],
+                            'transport' => $transport,
+                            'status' => 0,
+                            'error' => $e->getMessage(),
+                        ];
+                        $lastFailure = [
+                            'ok' => false,
+                            'status' => 0,
+                            'body' => '',
+                            'url' => $prepared['url'],
+                            'transport' => $transport,
+                            'method' => $candidateMethod,
+                            'decoded' => null,
+                            'error' => $e->getMessage(),
+                            'attempts' => $attempts,
+                        ];
+                        continue;
+                    }
+
+                    $attempts[] = [
+                        'method' => $candidateMethod,
+                        'url' => $response['url'],
+                        'transport' => $response['transport'],
+                        'status' => $response['status'],
+                        'error' => null,
+                    ];
+
+                    if (! $this->isSuccessfulStatus($response['status'])) {
+                        $lastFailure = [
+                            'ok' => false,
+                            'status' => $response['status'],
+                            'body' => $response['body'],
+                            'url' => $response['url'],
+                            'transport' => $response['transport'],
+                            'method' => $candidateMethod,
+                            'decoded' => null,
+                            'error' => null,
+                            'attempts' => $attempts,
+                        ];
+                        continue;
+                    }
+
+                    $decoded = $this->decodeResponse($response['body'], $logContext, $response['url'], $logFailures);
+
+                    return [
+                        'ok' => true,
+                        'status' => $response['status'],
+                        'body' => $response['body'],
+                        'url' => $response['url'],
+                        'transport' => $response['transport'],
+                        'method' => $candidateMethod,
+                        'decoded' => $decoded,
+                        'error' => null,
+                        'attempts' => $attempts,
+                    ];
+                }
+            }
         }
 
-        if ($this->transport === 'curl' && ! function_exists('curl_init')) {
-            Log::warning('ApiService transport set to curl but cURL extension is not available; falling back to PHP streams.');
+        if ($logFailures) {
+            $this->logFailure($logContext, $lastFailure);
         }
 
-        return $this->sendWithStream($prepared);
+        return $lastFailure;
+    }
+
+    protected function sendPrepared(array $request, string $transport): array
+    {
+        if ($transport === 'curl') {
+            if (! function_exists('curl_init')) {
+                throw new \RuntimeException('PHP cURL extension is not available.');
+            }
+
+            return $this->sendWithCurl($request);
+        }
+
+        return $this->sendWithStream($request);
     }
 
     protected function prepareRequest(string $method, string $url, array $data = []): array
@@ -299,7 +378,6 @@ class ApiService
             'url' => $url,
             'headers' => $headers,
             'body' => $body,
-            'body_format' => $bodyFormat,
         ];
     }
 
@@ -324,6 +402,10 @@ class ApiService
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         ];
 
+        if ($this->forceIpv4 && defined('CURL_IPRESOLVE_V4')) {
+            $options[CURLOPT_IPRESOLVE] = CURL_IPRESOLVE_V4;
+        }
+
         if ($request['body'] !== null && $request['method'] !== 'GET') {
             $options[CURLOPT_POSTFIELDS] = $request['body'];
         }
@@ -334,7 +416,6 @@ class ApiService
         }
 
         curl_setopt_array($ch, $options);
-
         $body = curl_exec($ch);
 
         if ($body === false) {
@@ -389,7 +470,7 @@ class ApiService
         ];
     }
 
-    protected function decodeResponse(string $body, string $logContext, string $url): mixed
+    protected function decodeResponse(string $body, string $logContext, string $url, bool $logFailures): mixed
     {
         $trimmed = trim($this->stripUtf8Bom($body));
 
@@ -407,11 +488,13 @@ class ApiService
             return $trimmed;
         }
 
-        Log::warning($logContext . ' Invalid JSON response', [
-            'url' => $url,
-            'body' => $this->truncateBody($trimmed),
-            'json_error' => json_last_error_msg(),
-        ]);
+        if ($logFailures) {
+            Log::warning($logContext . ' Invalid JSON response', [
+                'url' => $url,
+                'body' => $this->truncateBody($trimmed),
+                'json_error' => json_last_error_msg(),
+            ]);
+        }
 
         return null;
     }
@@ -481,6 +564,55 @@ class ApiService
         return null;
     }
 
+    protected function candidateMethods(string $method): array
+    {
+        $method = strtoupper($method);
+
+        if ($method === 'GET' && $this->readFallbackPost) {
+            return ['GET', 'POST'];
+        }
+
+        return [$method];
+    }
+
+    protected function candidateTransports(): array
+    {
+        if ($this->transport === 'curl') {
+            return ['curl'];
+        }
+
+        if ($this->transport === 'stream') {
+            return ['stream'];
+        }
+
+        return function_exists('curl_init') ? ['curl', 'stream'] : ['stream'];
+    }
+
+    protected function candidateUrls(string $url): array
+    {
+        $candidates = [$url];
+
+        $apiPrimary = $this->apiBaseUrls[0] ?? null;
+        if ($apiPrimary && str_starts_with($url, $apiPrimary)) {
+            $suffix = ltrim(substr($url, strlen($apiPrimary)), '/');
+
+            foreach ($this->apiBaseUrls as $baseUrl) {
+                $candidates[] = rtrim($baseUrl, '/') . '/' . $suffix;
+            }
+        }
+
+        $rhPrimary = $this->rhBaseUrls[0] ?? null;
+        if ($rhPrimary && str_starts_with($url, $rhPrimary)) {
+            $suffix = ltrim(substr($url, strlen($rhPrimary)), '/');
+
+            foreach ($this->rhBaseUrls as $baseUrl) {
+                $candidates[] = rtrim($baseUrl, '/') . '/' . $suffix;
+            }
+        }
+
+        return array_values(array_unique($candidates));
+    }
+
     protected function resolveBodyFormat(string $method): string
     {
         if (strtoupper($method) === 'GET') {
@@ -499,12 +631,60 @@ class ApiService
 
     protected function makeApiUrl(string $endpoint): string
     {
-        return $this->baseUrl . ltrim($endpoint, '/');
+        return ($this->apiBaseUrls[0] ?? '') . ltrim($endpoint, '/');
     }
 
     protected function makeRhUrl(string $path): string
     {
-        return $this->rhBaseUrl . ltrim($path, '/');
+        return ($this->rhBaseUrls[0] ?? '') . ltrim($path, '/');
+    }
+
+    protected function normalizeBaseUrls(string $primary, mixed $fallbacks): array
+    {
+        $urls = [];
+
+        foreach (array_merge([$primary], $this->toUrlList($fallbacks)) as $url) {
+            $url = trim((string) $url);
+
+            if ($url === '') {
+                continue;
+            }
+
+            $urls[] = rtrim($url, '/') . '/';
+        }
+
+        return array_values(array_unique($urls));
+    }
+
+    protected function resolveBaseUrls(string $primaryKey, string $fallbackKey): array
+    {
+        $suffix = $this->environmentSuffix();
+        $primary = (string) (config("crm.{$primaryKey}_{$suffix}") ?: config("crm.{$primaryKey}"));
+        $fallbacks = config("crm.{$fallbackKey}_{$suffix}");
+
+        if ($fallbacks === null || $fallbacks === '') {
+            $fallbacks = config("crm.{$fallbackKey}", []);
+        }
+
+        return $this->normalizeBaseUrls($primary, $fallbacks);
+    }
+
+    protected function environmentSuffix(): string
+    {
+        return app()->environment('local') ? 'local' : 'server';
+    }
+
+    protected function toUrlList(mixed $value): array
+    {
+        if (is_array($value)) {
+            return $value;
+        }
+
+        if (! is_string($value)) {
+            return [];
+        }
+
+        return array_filter(array_map('trim', explode(',', $value)));
     }
 
     protected function isSuccessfulStatus(int $status): bool
@@ -541,5 +721,24 @@ class ApiService
         }
 
         return substr($body, 0, $limit) . '...';
+    }
+
+    protected function logFailure(string $logContext, array $result): void
+    {
+        $context = [
+            'url' => $result['url'],
+            'transport' => $result['transport'],
+            'method' => $result['method'],
+            'attempts' => $result['attempts'],
+        ];
+
+        if ($result['error']) {
+            Log::error($logContext . ' ' . $result['error'], $context);
+            return;
+        }
+
+        Log::warning($logContext . " HTTP {$result['status']}", $context + [
+            'body' => $this->truncateBody($result['body'] ?? ''),
+        ]);
     }
 }
