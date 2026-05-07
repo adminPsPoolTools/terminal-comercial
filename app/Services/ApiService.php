@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class ApiService
@@ -21,20 +20,7 @@ class ApiService
     // ──────────────────────────────────────────────────────────────
     public function get(string $endpoint, array $params = []): mixed
     {
-        try {
-            $response = Http::timeout($this->timeout)
-                ->get($this->baseUrl . $endpoint, $params);
-
-            if ($response->successful()) {
-                return $response->object();   // stdClass / array de stdClass
-            }
-
-            Log::warning("ApiService::get [{$endpoint}] HTTP {$response->status()}");
-            return null;
-        } catch (\Throwable $e) {
-            Log::error("ApiService::get [{$endpoint}] " . $e->getMessage());
-            return null;
-        }
+        return $this->request('GET', $this->baseUrl . $endpoint, $params);
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -42,21 +28,7 @@ class ApiService
     // ──────────────────────────────────────────────────────────────
     public function post(string $endpoint, array $data = []): mixed
     {
-        try {
-            $response = Http::timeout($this->timeout)
-                ->asJson()
-                ->post($this->baseUrl . $endpoint, $data);
-
-            if ($response->successful()) {
-                return $response->object();
-            }
-
-            Log::warning("ApiService::post [{$endpoint}] HTTP {$response->status()}");
-            return null;
-        } catch (\Throwable $e) {
-            Log::error("ApiService::post [{$endpoint}] " . $e->getMessage());
-            return null;
-        }
+        return $this->request('POST', $this->baseUrl . $endpoint, $data);
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -64,16 +36,7 @@ class ApiService
     // ──────────────────────────────────────────────────────────────
     public function put(string $endpoint, array $data = []): mixed
     {
-        try {
-            $response = Http::timeout($this->timeout)
-                ->asJson()
-                ->put($this->baseUrl . $endpoint, $data);
-
-            return $response->successful() ? $response->object() : null;
-        } catch (\Throwable $e) {
-            Log::error("ApiService::put [{$endpoint}] " . $e->getMessage());
-            return null;
-        }
+        return $this->request('PUT', $this->baseUrl . $endpoint, $data);
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -81,15 +44,7 @@ class ApiService
     // ──────────────────────────────────────────────────────────────
     public function delete(string $endpoint, array $params = []): bool
     {
-        try {
-            $response = Http::timeout($this->timeout)
-                ->delete($this->baseUrl . $endpoint, $params);
-
-            return $response->successful();
-        } catch (\Throwable $e) {
-            Log::error("ApiService::delete [{$endpoint}] " . $e->getMessage());
-            return false;
-        }
+        return $this->request('DELETE', $this->baseUrl . $endpoint, $params) !== null;
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -284,12 +239,112 @@ class ApiService
     public function getRH(string $path, array $params = []): mixed
     {
         $url = rtrim(config('crm.ws_rh'), '/') . '/' . $path;
+        return $this->request('GET', $url, $params, "ApiService::getRH [{$path}]");
+    }
+
+    protected function request(string $method, string $url, array $data = [], ?string $logContext = null): mixed
+    {
+        $logContext ??= 'ApiService::' . strtolower($method) . ' [' . $this->extractEndpoint($url) . ']';
+
         try {
-            $response = Http::timeout($this->timeout)->get($url, $params);
-            return $response->successful() ? $response->object() : null;
+            if (! function_exists('curl_init')) {
+                throw new \RuntimeException('PHP cURL extension is not available.');
+            }
+
+            $ch = curl_init();
+            if ($ch === false) {
+                throw new \RuntimeException('Unable to initialize cURL.');
+            }
+
+            $headers = ['Accept: application/json'];
+            $method = strtoupper($method);
+
+            if ($method === 'GET' && ! empty($data)) {
+                $query = http_build_query($data);
+                $url .= (str_contains($url, '?') ? '&' : '?') . $query;
+            }
+
+            curl_setopt_array($ch, [
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_CONNECTTIMEOUT => $this->timeout,
+                CURLOPT_TIMEOUT => $this->timeout,
+                CURLOPT_HTTPHEADER => $headers,
+                CURLOPT_CUSTOMREQUEST => $method,
+            ]);
+
+            if (in_array($method, ['POST', 'PUT', 'PATCH', 'DELETE'], true) && ! empty($data)) {
+                $payload = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                if ($payload === false) {
+                    throw new \RuntimeException('Unable to encode JSON payload.');
+                }
+
+                $headers[] = 'Content-Type: application/json';
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+            }
+
+            $body = curl_exec($ch);
+            if ($body === false) {
+                $error = curl_error($ch) ?: 'Unknown cURL error';
+                curl_close($ch);
+                throw new \RuntimeException($error);
+            }
+
+            $status = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($status < 200 || $status >= 300) {
+                Log::warning($logContext . " HTTP {$status}", [
+                    'url' => $url,
+                    'body' => $this->truncateBody($body),
+                ]);
+                return null;
+            }
+
+            return $this->decodeResponse($body, $logContext, $url);
         } catch (\Throwable $e) {
-            Log::error("ApiService::getRH [{$path}] " . $e->getMessage());
+            Log::error($logContext . ' ' . $e->getMessage(), ['url' => $url]);
             return null;
         }
+    }
+
+    protected function decodeResponse(string $body, string $logContext, string $url): mixed
+    {
+        $trimmed = trim($body);
+
+        if ($trimmed === '') {
+            return null;
+        }
+
+        $decoded = json_decode($body);
+
+        if (json_last_error() === JSON_ERROR_NONE) {
+            return $decoded;
+        }
+
+        Log::warning($logContext . ' Invalid JSON response', [
+            'url' => $url,
+            'body' => $this->truncateBody($body),
+            'json_error' => json_last_error_msg(),
+        ]);
+
+        return null;
+    }
+
+    protected function extractEndpoint(string $url): string
+    {
+        $path = parse_url($url, PHP_URL_PATH) ?: $url;
+        return ltrim((string) basename($path), '/');
+    }
+
+    protected function truncateBody(string $body, int $limit = 500): string
+    {
+        if (strlen($body) <= $limit) {
+            return $body;
+        }
+
+        return substr($body, 0, $limit) . '...';
     }
 }

@@ -1,0 +1,42 @@
+[2026-05-07 13:45:28] production.ERROR: Class "App\Http\Controllers\Controller" not found {"exception":"[object] (Error(code: 0): Class \"App\\Http\\Controllers\\Controller\" not found at C:/xampp/htdocs/terminal-comercial/app/Http/Controllers/AuthController.php:8)
+[stacktrace]
+#0 C:/xampp/htdocs/terminal-comercial/vendor/composer/ClassLoader.php(576): include()
+#1 C:/xampp/htdocs/terminal-comercial/vendor/composer/ClassLoader.php(427): Composer/Autoload/{closure}('C://xampp//htdocs...')
+#2 [internal function]: Composer/Autoload/ClassLoader->loadClass('App//Http//Contro...')
+#3 C:/xampp/htdocs/terminal-comercial/vendor/laravel/framework/src/Illuminate/Routing/Route.php(1096): is_a('App//Http//Contro...', 'Illuminate//Rout...', true)
+#4 C:/xampp/htdocs/terminal-comercial/vendor/laravel/framework/src/Illuminate/Routing/Route.php(1035): Illuminate/Routing/Route->controllerMiddleware()
+#5 C:/xampp/htdocs/terminal-comercial/vendor/laravel/framework/src/Illuminate/Routing/Router.php(818): Illuminate/Routing/Route->gatherMiddleware()
+#6 C:/xampp/htdocs/terminal-comercial/vendor/laravel/framework/src/Illuminate/Foundation/Console/RouteListCommand.php(201): Illuminate/Routing/Router->gatherRouteMiddleware(Object(Illuminate/Routing/Route))
+#7 C:/xampp/htdocs/terminal-comercial/vendor/laravel/framework/src/Illuminate/Foundation/Console/RouteListCommand.php(146): Illuminate/Foundation/Console/RouteListCommand->getMiddleware(Object(Illuminate/Routing/Route))
+#8 C:/xampp/htdocs/terminal-comercial/vendor/laravel/framework/src/Illuminate/Foundation/Console/RouteListCommand.php(116): Illuminate/Foundation/Console/RouteListCommand->getRouteInformation(Object(Illuminate/Routing/Route))
+#9 [internal function]: Illuminate/Foundation/Console/RouteListCommand->Illuminate/Foundation/Console/{closure}(Object(Illuminate/Routing/Route), 2)
+#10 C:/xampp/htdocs/terminal-comercial/vendor/laravel/framework/src/Illuminate/Collections/Arr.php(600): array_map(Object(Closure), Array, Array)
+#11 C:/xampp/htdocs/terminal-comercial/vendor/laravel/framework/src/Illuminate/Collections/Collection.php(778): Illuminate/Support/Arr::map(Array, Object(Closure))
+#12 C:/xampp/htdocs/terminal-comercial/vendor/laravel/framework/src/Illuminate/Foundation/Console/RouteListCommand.php(115): Illuminate/Support/Collection->map(Object(Closure))
+#13 C:/xampp/htdocs/terminal-comercial/vendor/laravel/framework/src/Illuminate/Foundation/Console/RouteListCommand.php(101): Illuminate/Foundation/Console/RouteListCommand->getRoutes()
+#14 C:/xampp/htdocs/terminal-comercial/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate/Foundation/Console/RouteListCommand->handle()
+#15 C:/xampp/htdocs/terminal-comercial/vendor/laravel/framework/src/Illuminate/Container/Util.php(41): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#16 C:/xampp/htdocs/terminal-comercial/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(93): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#17 C:/xampp/htdocs/terminal-comercial/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Array, Object(Closure))
+#18 C:/xampp/htdocs/terminal-comercial/vendor/laravel/framework/src/Illuminate/Container/Container.php(662): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Array, Array, NULL)
+#19 C:/xampp/htdocs/terminal-comercial/vendor/laravel/framework/src/Illuminate/Console/Command.php(211): Illuminate/Container/Container->call(Array)
+#20 C:/xampp/htdocs/terminal-comercial/vendor/symfony/console/Command/Command.php(326): Illuminate/Console/Command->execute(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#21 C:/xampp/htdocs/terminal-comercial/vendor/laravel/framework/src/Illuminate/Console/Command.php(180): Symfony/Component/Console/Command/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#22 C:/xampp/htdocs/terminal-comercial/vendor/symfony/console/Application.php(1121): Illuminate/Console/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#23 C:/xampp/htdocs/terminal-comercial/vendor/symfony/console/Application.php(324): Symfony/Component/Console/Application->doRunCommand(Object(Illuminate/Foundation/Console/RouteListCommand), Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#24 C:/xampp/htdocs/terminal-comercial/vendor/symfony/console/Application.php(175): Symfony/Component/Console/Application->doRun(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#25 C:/xampp/htdocs/terminal-comercial/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(201): Symfony/Component/Console/Application->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#26 C:/xampp/htdocs/terminal-comercial/artisan(24): Illuminate/Foundation/Console/Kernel->handle(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#27 {main}
+"} 
+[2026-05-07 13:47:07] production.ERROR: ApiService::get [loginVendedores] Class "GuzzleHttp\HandlerStack" not found  
+[2026-05-07 13:47:34] production.ERROR: ApiService::get [loginVendedores] Class "GuzzleHttp\HandlerStack" not found  
+[2026-05-07 13:47:44] production.ERROR: ApiService::get [loginEmpleados] Class "GuzzleHttp\HandlerStack" not found  
+[2026-05-07 13:48:13] production.ERROR: ApiService::get [loginEmpleados] Class "GuzzleHttp\HandlerStack" not found  
+[2026-05-07 13:48:14] production.ERROR: ApiService::get [loginEmpleados] Class "GuzzleHttp\HandlerStack" not found  
+[2026-05-07 13:48:16] production.ERROR: ApiService::get [loginEmpleados] Class "GuzzleHttp\HandlerStack" not found  
+[2026-05-07 13:50:45] production.ERROR: ApiService::get [obtenerVendedoresTerminalComercial] Failed to connect to pspool.dyndns.org port 10445 after 21112 ms: Couldn't connect to server {"url":"http://pspool.dyndns.org:10445/ApiGesplanet_TC/public/api/obtenerVendedoresTerminalComercial"} 
+[2026-05-07 13:51:55] production.ERROR: ApiService::get [loginEmpleados] Failed to connect to pspool.dyndns.org port 10445 after 21055 ms: Couldn't connect to server {"url":"http://pspool.dyndns.org:10445/ApiGesplanet_TC/public/api/loginEmpleados?comercial=1"} 
+[2026-05-07 13:52:30] production.ERROR: ApiService::get [loginEmpleados] Failed to connect to pspool.dyndns.org port 10445 after 21044 ms: Couldn't connect to server {"url":"http://pspool.dyndns.org:10445/ApiGesplanet_TC/public/api/loginEmpleados?comercial=1"} 
+[2026-05-07 13:53:17] production.ERROR: ApiService::get [loginEmpleados] Failed to connect to pspool.dyndns.org port 10445 after 21014 ms: Couldn't connect to server {"url":"http://pspool.dyndns.org:10445/ApiGesplanet_TC/public/api/loginEmpleados?comercial=1"} 
+[2026-05-07 13:54:05] production.ERROR: ApiService::get [loginEmpleados] Failed to connect to pspool.dyndns.org port 10445 after 21095 ms: Couldn't connect to server {"url":"http://pspool.dyndns.org:10445/ApiGesplanet_TC/public/api/loginEmpleados?comercial=1"} 
