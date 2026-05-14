@@ -29,17 +29,17 @@ class ClientesController extends Controller
     public function list(Request $request)
     {
         $comercial = session('comercial_id');
+        $busqueda  = trim($request->input('busqueda', ''));
 
-        $filtros = [
-            'nombre_cliente'    => $request->input('busqueda', ''),
-            'categoria_cliente' => $request->input('categoria', ''),
-            'provincia'         => $request->input('provincia', ''),
-            'poblacion'         => $request->input('poblacion', ''),
+        // Numeric-only input is treated as a client code; text as a name search
+        $filtros = array_filter([
+            'nombre_cliente'    => !ctype_digit($busqueda) ? ($busqueda ?: null) : null,
+            'codigo_cliente'    => ctype_digit($busqueda)  ? $busqueda           : null,
+            'categoria_cliente' => $request->input('categoria', '') ?: null,
+            'provincia'         => $request->input('provincia', '') ?: null,
+            'poblacion'         => $request->input('poblacion', '') ?: null,
             'comercial'         => $comercial,
-            'fecha_desde_clientes' => '',
-            'fecha_alta'           => '',
-            'fecha_visitado'       => '',
-        ];
+        ]);
 
         $clientes = $this->api->buscarClientes($filtros);
         return view('clientes.list', compact('clientes', 'comercial'));
