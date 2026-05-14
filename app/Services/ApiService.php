@@ -161,6 +161,61 @@ class ApiService
         return $this->getArray('buscarIncidencias', $filtros);
     }
 
+    public function obtenerContactosCliente(string $codigo, int $comercial): array
+    {
+        return $this->getArray('obtenerContactosFichaCliente', ['cliente' => $codigo, 'comercial' => $comercial]);
+    }
+
+    public function obtenerDireccionesCliente(string $codigo): array
+    {
+        return $this->getArray('obtenerDireccionesCliente', ['cliente' => $codigo]);
+    }
+
+    public function obtenerVisitasCliente(string $codigo, int $comercial): array
+    {
+        return $this->getArray('obtenerVisitasFichaCliente', ['cliente' => $codigo, 'comercial' => $comercial]);
+    }
+
+    public function obtenerIncidenciasCliente(string $codigo): array
+    {
+        return $this->getArray('obtenerIncidenciasPorCliente', ['cliente' => $codigo]);
+    }
+
+    public function obtenerSolicitudesPresupuestoCliente(string $codigo, string $filtro = ''): array
+    {
+        return $this->getArray('obtenerSolicitudesPresupuestosFichaCliente', ['cliente' => $codigo, 'filtro' => $filtro]);
+    }
+
+    public function obtenerVentasSgfa(string $fechaDesde, string $codigo): array
+    {
+        return $this->getArray('obtenerVentasSgfa', ['fecha_desde' => $fechaDesde, 'cliente' => $codigo, 'proyecto' => 1]);
+    }
+
+    public function obtenerArticulosVendidos(string $fechaDesde, string $codigo): array
+    {
+        return $this->getArray('obtenerArticulosVendidos', ['fecha_desde' => $fechaDesde, 'cliente' => $codigo, 'proyecto' => 1]);
+    }
+
+    public function obtenerLlamadasCliente(string $codigo): array
+    {
+        return $this->getArray('obtenerLlamadasFichaClientes', ['cliente' => $codigo]);
+    }
+
+    public function obtenerAlbaranesCliente(string $fechaDesde, int $comercial, string $codigo): array
+    {
+        return $this->getArray('obtenerAlbaranesFichaClientes', [
+            'fecha_desde' => $fechaDesde,
+            'comercial'   => $comercial,
+            'cliente'     => $codigo,
+            'titulo'      => '',
+        ]);
+    }
+
+    public function obtenerHorariosCliente(string $codigo): array
+    {
+        return $this->getArray('obtenerHorariosCliente', ['cliente' => $codigo]);
+    }
+
     public function obtenerEstadosIncidencia(): array
     {
         return $this->getArray('obtenerSelectEstadoIncidencia');

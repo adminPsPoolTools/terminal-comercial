@@ -23,7 +23,7 @@ class PresupuestosController extends Controller
         $comercial = session('comercial_id');
 
         $filtros = [
-            'cliente'       => '',
+            'cliente'       => $request->input('cliente', ''),
             'fecha_desde'   => $request->input('fecha_desde', date('01/01/Y')),
             'titulo'        => $request->input('titulo', ''),
             'estado'        => $request->input('estado', ''),

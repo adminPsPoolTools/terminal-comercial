@@ -77,4 +77,16 @@ Route::middleware('auth.comercial')->group(function () {
 
     // RRHH
     Route::get('/rrhh', [RrhhController::class, 'index'])->name('rrhh.index');
+
+    // Cliente — tabs AJAX
+    Route::get('/clientes/{codigo}/contactos',            [ClientesController::class, 'tabContactos'])->name('clientes.tab.contactos');
+    Route::get('/clientes/{codigo}/direcciones',          [ClientesController::class, 'tabDirecciones'])->name('clientes.tab.direcciones');
+    Route::get('/clientes/{codigo}/visitas',              [ClientesController::class, 'tabVisitas'])->name('clientes.tab.visitas');
+    Route::get('/clientes/{codigo}/incidencias',          [ClientesController::class, 'tabIncidencias'])->name('clientes.tab.incidencias');
+    Route::get('/clientes/{codigo}/solicitudes',          [ClientesController::class, 'tabSolicitudes'])->name('clientes.tab.solicitudes');
+    Route::get('/clientes/{codigo}/ventas-sgfa',          [ClientesController::class, 'tabVentasSgfa'])->name('clientes.tab.ventas-sgfa');
+    Route::get('/clientes/{codigo}/articulos-vendidos',   [ClientesController::class, 'tabArticulosVendidos'])->name('clientes.tab.articulos-vendidos');
+    Route::get('/clientes/{codigo}/llamadas',             [ClientesController::class, 'tabLlamadas'])->name('clientes.tab.llamadas');
+    Route::get('/clientes/{codigo}/albaranes',            [ClientesController::class, 'tabAlbaranes'])->name('clientes.tab.albaranes');
+    Route::get('/clientes/{codigo}/horarios',             [ClientesController::class, 'tabHorarios'])->name('clientes.tab.horarios');
 });

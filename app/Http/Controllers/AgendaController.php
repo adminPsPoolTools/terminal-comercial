@@ -27,14 +27,15 @@ class AgendaController extends Controller
         $comercial = session('comercial_id');
 
         $filtros = [
-            'fecha_desde'  => $this->toFirebirdDate($request->input('fecha_desde', '01/01/2000')),
-            'titulo'       => $request->input('titulo', ''),
-            'realizado'    => $request->input('realizado', ''),
-            'con_alarma'   => $request->input('con_alarma', ''),
-            'recordatorio' => $request->input('recordatorio', ''),
-            'estado'       => $request->input('estado', ''),
-            'comercial'    => $comercial,
-            'usuario'      => $request->input('usuario', $comercial),
+            'fecha_desde'    => $this->toFirebirdDate($request->input('fecha_desde', '01/01/2000')),
+            'titulo'         => $request->input('titulo', ''),
+            'realizado'      => $request->input('realizado', ''),
+            'con_alarma'     => $request->input('con_alarma', ''),
+            'recordatorio'   => $request->input('recordatorio', ''),
+            'estado'         => $request->input('estado', ''),
+            'comercial'      => $comercial,
+            'usuario'        => $request->input('usuario', $comercial),
+            'codigo_cliente' => $request->input('codigo_cliente', ''),
         ];
 
         $agendas = $this->api->buscarAgendas($filtros);
