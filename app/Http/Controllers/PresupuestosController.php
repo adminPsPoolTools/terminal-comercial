@@ -41,6 +41,13 @@ class PresupuestosController extends Controller
         return view('presupuestos.list', compact('presupuestos', 'comercial'));
     }
 
+    public function detalle(string $codigo)
+    {
+        $cabecera = $this->api->obtenerDetallePresupuesto($codigo);
+        $lineas   = $this->api->obtenerLineasPresupuesto($codigo);
+        return view('presupuestos.detalle', compact('cabecera', 'lineas', 'codigo'));
+    }
+
     public function poblaciones(Request $request)
     {
         $poblaciones = $this->api->obtenerPoblaciones($request->input('provincia', ''));

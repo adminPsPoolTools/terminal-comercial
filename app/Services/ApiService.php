@@ -216,6 +216,56 @@ class ApiService
         return $this->getArray('obtenerHorariosCliente', ['cliente' => $codigo]);
     }
 
+    public function obtenerDetallePresupuesto(string $codigo): ?object
+    {
+        return $this->getItem('obtenerInformacionPresupuesto', ['presupuesto' => $codigo]);
+    }
+
+    public function obtenerLineasPresupuesto(string $codigo): array
+    {
+        return $this->getArray('obtenerArticulosPresupuesto', ['presupuesto' => $codigo]);
+    }
+
+    public function obtenerDetallePedido(string $codigo): ?object
+    {
+        return $this->getItem('obtenerInformacionInformePedido', ['proyecto' => config('crm.proyecto', 1), 'pedido' => $codigo]);
+    }
+
+    public function obtenerLineasPedido(string $codigo): array
+    {
+        return $this->getArray('obtenerLineasPedidoInforme', ['proyecto' => config('crm.proyecto', 1), 'pedido' => $codigo]);
+    }
+
+    public function obtenerDetalleAlbaran(string $codigo): ?object
+    {
+        return $this->getItem('obtenerInformacionAlbaran', ['proyecto' => config('crm.proyecto', 1), 'albaran' => $codigo]);
+    }
+
+    public function obtenerLineasAlbaran(string $codigo): array
+    {
+        return $this->getArray('obtenerArticulosAlbaran', ['albaran' => $codigo]);
+    }
+
+    public function obtenerDetalleVisita(string $codigo): ?object
+    {
+        return $this->getItem('obtenerDetalleVisita', ['codigo' => $codigo]);
+    }
+
+    public function obtenerAccionesVisita(string $codigo): array
+    {
+        return $this->getArray('obtenerAccionesVisitaPorCodigo', ['codigo' => $codigo]);
+    }
+
+    public function obtenerAsuntosVisita(string $codigo): array
+    {
+        return $this->getArray('obtenerAsuntosVisitaPorCodigo', ['codigo' => $codigo]);
+    }
+
+    public function obtenerDetalleSolicitud(string $codigo): ?object
+    {
+        return $this->getItem('obtenerSolicitudPresupuestoPorCodigo', ['codigo' => $codigo, 'visita_comercial' => '']);
+    }
+
     public function obtenerEstadosIncidencia(): array
     {
         return $this->getArray('obtenerSelectEstadoIncidencia');

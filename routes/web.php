@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AgendaController;
+use App\Http\Controllers\AlbaranesController;
 use App\Http\Controllers\ArticulosController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientesController;
@@ -12,6 +13,8 @@ use App\Http\Controllers\ObjetivosController;
 use App\Http\Controllers\PedidosController;
 use App\Http\Controllers\PresupuestosController;
 use App\Http\Controllers\RrhhController;
+use App\Http\Controllers\SolicitudesController;
+use App\Http\Controllers\VisitasController;
 use Illuminate\Support\Facades\Route;
 
 // ── Home / Login ─────────────────────────────────────────────────────────────
@@ -50,6 +53,7 @@ Route::middleware('auth.comercial')->group(function () {
     Route::get('/presupuestos',             [PresupuestosController::class, 'index'])->name('presupuestos.index');
     Route::get('/presupuestos/list',        [PresupuestosController::class, 'list'])->name('presupuestos.list');
     Route::get('/presupuestos/poblaciones', [PresupuestosController::class, 'poblaciones'])->name('presupuestos.poblaciones');
+    Route::get('/presupuestos/{codigo}',    [PresupuestosController::class, 'detalle'])->name('presupuestos.detalle');
 
     // Expedientes
     Route::get('/expedientes',      [ExpedientesController::class, 'index'])->name('expedientes.index');
@@ -59,9 +63,19 @@ Route::middleware('auth.comercial')->group(function () {
     Route::get('/gastos',      [GastosController::class, 'index'])->name('gastos.index');
     Route::get('/gastos/list', [GastosController::class, 'list'])->name('gastos.list');
 
-    // Pedidos
-    Route::get('/pedidos',      [PedidosController::class, 'index'])->name('pedidos.index');
-    Route::get('/pedidos/list', [PedidosController::class, 'list'])->name('pedidos.list');
+    // Pedidos (list before wildcard)
+    Route::get('/pedidos',          [PedidosController::class, 'index'])->name('pedidos.index');
+    Route::get('/pedidos/list',     [PedidosController::class, 'list'])->name('pedidos.list');
+    Route::get('/pedidos/{codigo}', [PedidosController::class, 'detalle'])->name('pedidos.detalle');
+
+    // Albaranes
+    Route::get('/albaranes/{codigo}', [AlbaranesController::class, 'detalle'])->name('albaranes.detalle');
+
+    // Visitas comerciales
+    Route::get('/visitas/{codigo}', [VisitasController::class, 'detalle'])->name('visitas.detalle');
+
+    // Solicitudes de presupuesto
+    Route::get('/solicitudes/{codigo}', [SolicitudesController::class, 'detalle'])->name('solicitudes.detalle');
 
     // Listados
     Route::get('/listados',                 [ListadosController::class, 'index'])->name('listados.index');

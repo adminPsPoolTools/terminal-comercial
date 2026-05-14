@@ -38,63 +38,55 @@
   </div>
 
   {{-- Info grid --}}
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
 
-    <div class="crm-card p-5">
-      <h3 class="font-head font-semibold text-sm text-slate-800 mb-4 pb-3 border-b border-slate-100 uppercase tracking-wide">Contacto</h3>
-      <dl class="space-y-2.5 text-sm">
+    <div class="crm-card p-3 info-card">
+      <h3>Contacto</h3>
+      <dl class="dl-compact">
         @foreach([
           ['Dirección',  $cliente->DIRECCION ?? ''],
-          ['CP / Pobl.', trim(($cliente->CP ?? '').' '.($cliente->POBLACION ?? ''))],
+          ['CP/Pobl.',   trim(($cliente->CP??'').' '.($cliente->POBLACION??''))],
           ['Comarca',    $cliente->COMARCA ?? ''],
           ['Provincia',  $cliente->PROVINCIA ?? ''],
           ['País',       $cliente->PAIS ?? ''],
           ['Tel. fijo',  $cliente->TELEFONOFIJO ?? ''],
-          ['Tel. móvil', $cliente->TELEFONOMOVIL ?? ''],
+          ['Móvil',      $cliente->TELEFONOMOVIL ?? ''],
           ['Fax',        $cliente->FAX ?? ''],
           ['Email',      $cliente->CORREO ?? ''],
           ['Web',        $cliente->WEB ?? ''],
-        ] as [$label, $value])
-          @if($value)
-          <div class="flex gap-3">
-            <dt class="w-28 shrink-0 text-slate-400 font-medium">{{ $label }}</dt>
-            <dd class="text-slate-700 break-all">
-              @if($label === 'Email') <a href="mailto:{{ $value }}" class="text-blue-600 hover:underline">{{ $value }}</a>
-              @elseif($label === 'Web') <a href="{{ $value }}" target="_blank" class="text-blue-600 hover:underline">{{ $value }}</a>
-              @else {{ $value }}
-              @endif
-            </dd>
-          </div>
-          @endif
-        @endforeach
+        ] as [$label, $value]) @if($value)
+        <div class="dl-row">
+          <dt>{{ $label }}</dt>
+          <dd class="break-all">
+            @if($label==='Email') <a href="mailto:{{ $value }}" class="text-blue-600 hover:underline">{{ $value }}</a>
+            @elseif($label==='Web') <a href="{{ $value }}" target="_blank" class="text-blue-600 hover:underline">{{ $value }}</a>
+            @else {{ $value }} @endif
+          </dd>
+        </div>
+        @endif @endforeach
       </dl>
     </div>
 
-    <div class="crm-card p-5">
-      <h3 class="font-head font-semibold text-sm text-slate-800 mb-4 pb-3 border-b border-slate-100 uppercase tracking-wide">Comercial</h3>
-      <dl class="space-y-2.5 text-sm">
+    <div class="crm-card p-3 info-card">
+      <h3>Comercial</h3>
+      <dl class="dl-compact">
         @foreach([
-          ['Vendedor',   $cliente->USUARIO_ALTA ?? ''],
-          ['Categoría',  $cliente->DESCRIPCIONCATEGORIA ?? ''],
-          ['Tipo',       $cliente->DESCRIPCIONTIPO ?? ''],
-          ['CIF / NIF',  $cliente->CIF ?? ''],
-          ['Riesgo',     $cliente->RIESGO ?? ''],
-          ['F. alta',    $cliente->FECHA_ALTA ?? ''],
-          ['Bloqueado',  ($cliente->BLOQUEADO ?? '') === 'S' ? 'Sí' : ''],
-        ] as [$label, $value])
-          @if($value)
-          <div class="flex gap-3">
-            <dt class="w-28 shrink-0 text-slate-400 font-medium">{{ $label }}</dt>
-            <dd class="text-slate-700">{{ $value }}</dd>
-          </div>
-          @endif
-        @endforeach
+          ['Vendedor',  $cliente->USUARIO_ALTA ?? ''],
+          ['Categoría', $cliente->DESCRIPCIONCATEGORIA ?? ''],
+          ['Tipo',      $cliente->DESCRIPCIONTIPO ?? ''],
+          ['CIF/NIF',   $cliente->CIF ?? ''],
+          ['Riesgo',    $cliente->RIESGO ?? ''],
+          ['F. alta',   $cliente->FECHA_ALTA ?? ''],
+          ['Bloqueado', ($cliente->BLOQUEADO??'')==='S' ? 'Sí' : ''],
+        ] as [$label, $value]) @if($value)
+        <div class="dl-row"><dt>{{ $label }}</dt><dd>{{ $value }}</dd></div>
+        @endif @endforeach
       </dl>
     </div>
 
-    <div class="crm-card p-5">
-      <h3 class="font-head font-semibold text-sm text-slate-800 mb-4 pb-3 border-b border-slate-100 uppercase tracking-wide">Fiscal / Financiero</h3>
-      <dl class="space-y-2.5 text-sm">
+    <div class="crm-card p-3 info-card">
+      <h3>Fiscal</h3>
+      <dl class="dl-compact">
         @foreach([
           ['Forma pago', $cliente->FORMADEPAGO ?? ''],
           ['Banco',      $cliente->BANCO ?? ''],
@@ -102,34 +94,24 @@
           ['Dto. gral.', $cliente->DTO_GENERAL ?? ''],
           ['Impuesto',   $cliente->IMPUESTO ?? ''],
           ['Agencia T.', $cliente->AGENCIAT ?? ''],
-          ['No crédito', ($cliente->NO_CREDITO ?? '') === 'S' ? 'Sí' : ''],
-        ] as [$label, $value])
-          @if($value)
-          <div class="flex gap-3">
-            <dt class="w-28 shrink-0 text-slate-400 font-medium">{{ $label }}</dt>
-            <dd class="text-slate-700">{{ $value }}</dd>
-          </div>
-          @endif
-        @endforeach
+          ['Sin crédito',($cliente->NO_CREDITO??'')==='S' ? 'Sí' : ''],
+        ] as [$label, $value]) @if($value)
+        <div class="dl-row"><dt>{{ $label }}</dt><dd>{{ $value }}</dd></div>
+        @endif @endforeach
       </dl>
     </div>
 
-    <div class="crm-card p-5">
-      <h3 class="font-head font-semibold text-sm text-slate-800 mb-4 pb-3 border-b border-slate-100 uppercase tracking-wide">Envío mercancía</h3>
-      <dl class="space-y-2.5 text-sm">
+    <div class="crm-card p-3 info-card">
+      <h3>Envío</h3>
+      <dl class="dl-compact">
         @foreach([
           ['Dirección',  $cliente->DIRECCIONENVIOMERCANCIA ?? ''],
-          ['CP / Pobl.', trim(($cliente->CPENVIOMERCANCIA ?? '').' '.($cliente->POBLACIONENVIOMERCANCIA ?? ''))],
+          ['CP/Pobl.',   trim(($cliente->CPENVIOMERCANCIA??'').' '.($cliente->POBLACIONENVIOMERCANCIA??''))],
           ['Provincia',  $cliente->PROVINCIAENVIOMERCANCIA ?? ''],
           ['Teléfono',   $cliente->TELEFONOFIJOENVIOMERCANCIA ?? ''],
-        ] as [$label, $value])
-          @if($value)
-          <div class="flex gap-3">
-            <dt class="w-28 shrink-0 text-slate-400 font-medium">{{ $label }}</dt>
-            <dd class="text-slate-700">{{ $value }}</dd>
-          </div>
-          @endif
-        @endforeach
+        ] as [$label, $value]) @if($value)
+        <div class="dl-row"><dt>{{ $label }}</dt><dd>{{ $value }}</dd></div>
+        @endif @endforeach
       </dl>
     </div>
 

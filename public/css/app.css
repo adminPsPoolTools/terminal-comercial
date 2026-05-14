@@ -198,6 +198,18 @@ h1,h2,h3,h4 { font-family: var(--font-head); }
 #content-area { padding: 24px; min-height: calc(100vh - var(--topbar-h)); }
 @media (max-width: 767px) { #content-area { padding: 14px; } }
 
+/* ─ Compact info grid (fichas detalle) ───────────────────────── */
+.info-card h3 {
+  font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.07em; color: #94a3b8;
+  padding-bottom: 8px; margin-bottom: 8px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.dl-compact { display: flex; flex-direction: column; gap: 4px; }
+.dl-compact .dl-row { display: flex; gap: 8px; font-size: 0.75rem; }
+.dl-compact .dl-row dt { width: 88px; flex-shrink: 0; color: #94a3b8; font-weight: 500; }
+.dl-compact .dl-row dd { color: #1e293b; word-break: break-word; }
+
 /* ─ Scrollbar ────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }

@@ -28,11 +28,7 @@
       <tbody>
         @foreach($incidencias as $row)
         <tr>
-          <td class="font-mono text-xs font-semibold">
-            <a href="#" class="text-blue-600 hover:underline" title="Detalle incidencia {{ $row->LINEA ?? '' }}">
-              {{ $row->LINEA ?? '—' }}
-            </a>
-          </td>
+          <td class="font-mono text-xs text-slate-400">{{ $row->LINEA ?? '—' }}</td>
           <td class="text-xs">{{ $row->FECHA ?? '—' }}</td>
           <td class="text-sm max-w-sm truncate">{{ $row->INCIDENCIA ?? '—' }}</td>
           <td>

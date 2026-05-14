@@ -30,7 +30,9 @@
       <tbody>
         @foreach($visitas as $row)
         <tr>
-          <td class="font-mono text-xs text-slate-400">{{ $row->CODIGO ?? '—' }}</td>
+          <td class="font-mono text-xs font-semibold">
+            <a href="{{ route('visitas.detalle', $row->CODIGO ?? 0) }}" class="text-blue-600 hover:underline">{{ $row->CODIGO ?? '—' }}</a>
+          </td>
           <td class="font-medium text-sm">{{ $row->FECHA ?? '—' }}</td>
           <td class="text-xs">{{ $row->HORA ?? '—' }}</td>
           <td class="text-xs"><span class="badge badge-blue">{{ $row->TIPO ?? '—' }}</span></td>

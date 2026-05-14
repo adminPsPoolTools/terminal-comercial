@@ -38,7 +38,7 @@
           @if(!is_null($row->CODIGO ?? null))
           <tr>
             <td class="font-mono text-xs font-semibold">
-              <a href="#" class="text-blue-600 hover:underline" title="Detalle presupuesto {{ $row->CODIGO }}">
+              <a href="{{ route('presupuestos.detalle', $row->CODIGO) }}" class="text-blue-600 hover:underline">
                 {{ $row->CODIGO }}
               </a>
             </td>

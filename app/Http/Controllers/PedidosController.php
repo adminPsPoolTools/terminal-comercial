@@ -17,6 +17,13 @@ class PedidosController extends Controller
         return view('pedidos.index', compact('comercial', 'estados'));
     }
 
+    public function detalle(string $codigo)
+    {
+        $cabecera = $this->api->obtenerDetallePedido($codigo);
+        $lineas   = $this->api->obtenerLineasPedido($codigo);
+        return view('pedidos.detalle', compact('cabecera', 'lineas', 'codigo'));
+    }
+
     public function list(Request $request)
     {
         $comercial = session('comercial_id');

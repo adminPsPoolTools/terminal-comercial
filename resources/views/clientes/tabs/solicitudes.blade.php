@@ -31,7 +31,7 @@
         @foreach($solicitudes as $row)
         <tr>
           <td class="font-mono text-xs font-semibold">
-            <a href="#" class="text-blue-600 hover:underline" title="Detalle solicitud {{ $row->CODIGO ?? '' }}">
+            <a href="{{ route('solicitudes.detalle', $row->CODIGO ?? 0) }}" class="text-blue-600 hover:underline">
               {{ $row->CODIGO ?? '—' }}
             </a>
           </td>
