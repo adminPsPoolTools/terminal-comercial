@@ -31,7 +31,7 @@
           </div>
         @endif
       </div>
-      <div class="flex gap-2 shrink-0">
+      <div class="shrink-0">
         <a href="{{ route('clientes.index') }}" class="btn btn-secondary btn-sm">← Volver</a>
       </div>
     </div>
@@ -40,7 +40,6 @@
   {{-- Info grid --}}
   <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-    {{-- Datos contacto --}}
     <div class="crm-card p-5">
       <h3 class="font-head font-semibold text-sm text-slate-800 mb-4 pb-3 border-b border-slate-100 uppercase tracking-wide">Contacto</h3>
       <dl class="space-y-2.5 text-sm">
@@ -71,7 +70,6 @@
       </dl>
     </div>
 
-    {{-- Datos comerciales --}}
     <div class="crm-card p-5">
       <h3 class="font-head font-semibold text-sm text-slate-800 mb-4 pb-3 border-b border-slate-100 uppercase tracking-wide">Comercial</h3>
       <dl class="space-y-2.5 text-sm">
@@ -94,7 +92,6 @@
       </dl>
     </div>
 
-    {{-- Datos fiscales --}}
     <div class="crm-card p-5">
       <h3 class="font-head font-semibold text-sm text-slate-800 mb-4 pb-3 border-b border-slate-100 uppercase tracking-wide">Fiscal / Financiero</h3>
       <dl class="space-y-2.5 text-sm">
@@ -117,7 +114,6 @@
       </dl>
     </div>
 
-    {{-- Envío --}}
     <div class="crm-card p-5">
       <h3 class="font-head font-semibold text-sm text-slate-800 mb-4 pb-3 border-b border-slate-100 uppercase tracking-wide">Envío mercancía</h3>
       <dl class="space-y-2.5 text-sm">
@@ -142,12 +138,12 @@
   {{-- Comentarios --}}
   @php
     $comentarios = array_filter([
-      'Comentario'           => $cliente->COMENTARIO ?? '',
-      'Interno'              => $cliente->COMENTARIO_INTERNO_CLIENTE ?? '',
-      'Comercial'            => $cliente->COMENTARIO_COMERCIAL_CLIENTE ?? '',
-      'Horario'              => $cliente->HORARIO ?? '',
-      'Riesgo'               => $cliente->COMENTARIO_RIESGO ?? '',
-      'Bloqueado'            => $cliente->COMENTARIO_BLOQUEADO_CLIENTE ?? '',
+      'Comentario'  => $cliente->COMENTARIO ?? '',
+      'Interno'     => $cliente->COMENTARIO_INTERNO_CLIENTE ?? '',
+      'Comercial'   => $cliente->COMENTARIO_COMERCIAL_CLIENTE ?? '',
+      'Horario'     => $cliente->HORARIO ?? '',
+      'Riesgo'      => $cliente->COMENTARIO_RIESGO ?? '',
+      'Bloqueado'   => $cliente->COMENTARIO_BLOQUEADO_CLIENTE ?? '',
     ]);
   @endphp
   @if(count($comentarios))
@@ -168,18 +164,14 @@
   <div class="crm-card overflow-hidden">
     <div class="flex border-b border-slate-100 overflow-x-auto" id="tabs-nav">
       @foreach([
-        ['id'=>'tab-agenda',     'label'=>'Agenda'],
         ['id'=>'tab-visitas',    'label'=>'Visitas'],
         ['id'=>'tab-presup',     'label'=>'Presupuestos'],
         ['id'=>'tab-solicitudes','label'=>'Sol. Presup.'],
         ['id'=>'tab-pedidos',    'label'=>'Pedidos'],
         ['id'=>'tab-albaranes',  'label'=>'Albaranes'],
-        ['id'=>'tab-expediente', 'label'=>'Expedientes'],
         ['id'=>'tab-incidencias','label'=>'Incidencias'],
         ['id'=>'tab-ventas',     'label'=>'Ventas SGFA'],
         ['id'=>'tab-articulos',  'label'=>'Artículos'],
-        ['id'=>'tab-llamadas',   'label'=>'Llamadas'],
-        ['id'=>'tab-gastos',     'label'=>'Gastos'],
         ['id'=>'tab-contactos',  'label'=>'Contactos'],
         ['id'=>'tab-direcciones','label'=>'Direcciones'],
         ['id'=>'tab-horarios',   'label'=>'Horarios'],
@@ -192,7 +184,7 @@
       </button>
       @endforeach
     </div>
-    <div id="tab-content" class="p-1 min-h-[200px]">
+    <div id="tab-content" class="min-h-[260px]">
       <div class="flex items-center justify-center gap-3 py-16 text-slate-400 text-sm">
         <span class="spinner"></span> Cargando...
       </div>
@@ -212,18 +204,14 @@ function tabUrl(tab) {
   var hoy = new Date();
   var inicioAnio = hoy.getFullYear() + '-01-01';
   var urls = {
-    'tab-agenda':      baseUrl+'/agenda/list?codigo_cliente='+clienteCodigo+'&comercial='+comercial,
     'tab-visitas':     baseUrl+'/clientes/'+clienteCodigo+'/visitas',
     'tab-presup':      baseUrl+'/presupuestos/list?cliente='+clienteCodigo,
     'tab-solicitudes': baseUrl+'/clientes/'+clienteCodigo+'/solicitudes',
     'tab-pedidos':     baseUrl+'/pedidos/list?cliente='+clienteCodigo,
     'tab-albaranes':   baseUrl+'/clientes/'+clienteCodigo+'/albaranes?fecha_desde='+inicioAnio,
-    'tab-expediente':  baseUrl+'/expedientes/list?cliente_asign='+clienteCodigo,
     'tab-incidencias': baseUrl+'/clientes/'+clienteCodigo+'/incidencias',
     'tab-ventas':      baseUrl+'/clientes/'+clienteCodigo+'/ventas-sgfa?fecha_desde='+inicioAnio,
     'tab-articulos':   baseUrl+'/clientes/'+clienteCodigo+'/articulos-vendidos?fecha_desde='+inicioAnio,
-    'tab-llamadas':    baseUrl+'/clientes/'+clienteCodigo+'/llamadas',
-    'tab-gastos':      baseUrl+'/gastos/list?cliente='+clienteCodigo,
     'tab-contactos':   baseUrl+'/clientes/'+clienteCodigo+'/contactos',
     'tab-direcciones': baseUrl+'/clientes/'+clienteCodigo+'/direcciones',
     'tab-horarios':    baseUrl+'/clientes/'+clienteCodigo+'/horarios',

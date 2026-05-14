@@ -3,30 +3,42 @@
 @if(empty($presupuestos))
   <div class="empty-state">Sin presupuestos para los filtros seleccionados.</div>
 @else
-  <div class="table-wrapper rounded-xl overflow-hidden">
+
+@php foreach($presupuestos as $row) { if(!is_null($row->CODIGO??null)){ $total += $row->BASEIMPONIBLE??0; $totalIva += $row->TOTAL??0; } } @endphp
+
+<div id="ct-presup">
+  <div class="flex flex-wrap items-center gap-3 px-4 py-3 border-b border-slate-100 bg-white">
+    <div class="relative">
+      <svg class="absolute left-2.5 top-2 w-4 h-4 text-slate-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" class="tab-search form-input pl-8 py-1.5 text-xs w-52" placeholder="Buscar en presupuestos...">
+    </div>
+    <span class="tab-count text-xs text-slate-400"></span>
+    <div class="ml-auto flex items-center gap-2">
+      <button class="btn-tab-prev btn btn-sm btn-secondary" disabled>‹ Ant.</button>
+      <span class="tab-page-info text-xs text-slate-500 w-14 text-center font-medium"></span>
+      <button class="btn-tab-next btn btn-sm btn-secondary">Sig. ›</button>
+    </div>
+  </div>
+  <div class="table-wrapper">
     <table class="crm-table">
       <thead>
         <tr>
-          <th>Código</th>
-          <th>Fecha</th>
-          <th>Cliente</th>
-          <th>Título</th>
-          <th>Estado</th>
-          <th>Comercial</th>
-          <th class="td-right">Base Imp.</th>
-          <th class="td-right">C/IVA</th>
+          <th class="srt">Código <span class="sa text-slate-300">↕</span></th>
+          <th class="srt">Fecha <span class="sa text-slate-300">↕</span></th>
+          <th class="srt">Cliente <span class="sa text-slate-300">↕</span></th>
+          <th class="srt">Título <span class="sa text-slate-300">↕</span></th>
+          <th class="srt">Estado <span class="sa text-slate-300">↕</span></th>
+          <th class="srt">Comercial <span class="sa text-slate-300">↕</span></th>
+          <th class="srt td-right">Base Imp. <span class="sa text-slate-300">↕</span></th>
+          <th class="srt td-right">C/IVA <span class="sa text-slate-300">↕</span></th>
         </tr>
       </thead>
       <tbody>
         @foreach($presupuestos as $row)
           @if(!is_null($row->CODIGO ?? null))
-          @php
-            $total    += $row->BASEIMPONIBLE ?? 0;
-            $totalIva += $row->TOTAL ?? 0;
-          @endphp
           <tr>
-            <td class="font-mono text-xs">
-              <a href="#" class="text-blue-600 hover:underline font-semibold">
+            <td class="font-mono text-xs font-semibold">
+              <a href="#" class="text-blue-600 hover:underline" title="Detalle presupuesto {{ $row->CODIGO }}">
                 {{ $row->CODIGO }}
               </a>
             </td>
@@ -41,7 +53,7 @@
               @php
                 $est = $row->DESCRIPCION_ESTADO ?? $row->ESTADO ?? '';
                 $cls = match(true) {
-                  str_contains(strtolower($est), 'acept') => 'badge-green',
+                  str_contains(strtolower($est), 'acept')  => 'badge-green',
                   str_contains(strtolower($est), 'rechaz') => 'badge-red',
                   str_contains(strtolower($est), 'espera') => 'badge-yellow',
                   default => 'badge-gray',
@@ -58,11 +70,14 @@
       </tbody>
       <tfoot>
         <tr class="total-row">
-          <td colspan="6" class="text-right font-semibold text-slate-600 text-xs uppercase tracking-wide pr-4">Total</td>
+          <td colspan="6" class="text-right font-semibold text-slate-600 text-xs uppercase tracking-wide pr-4">Total general</td>
           <td class="td-right font-mono font-bold">{{ number_format($total, 2, ',', '.') }}€</td>
           <td class="td-right font-mono font-bold">{{ number_format($totalIva, 2, ',', '.') }}€</td>
         </tr>
       </tfoot>
     </table>
   </div>
+</div>
+<script>window.initCrmTable && window.initCrmTable('ct-presup');</script>
+
 @endif

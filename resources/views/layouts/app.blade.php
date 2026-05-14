@@ -241,5 +241,61 @@ setInterval(pollAlarmas, 15000);
 
 @stack('scripts')
 
+<script>
+/* ── initCrmTable: search + sort + pagination for any tab table ── */
+window.initCrmTable = function(cid) {
+  var $c = $('#' + cid);
+  if (!$c.length) return;
+  var $tbody = $c.find('table tbody');
+  var all = $tbody.find('tr').toArray();
+  var filtered = all.slice();
+  var page = 1, ps = 10, sc = -1, asc = true;
+  var $search = $c.find('.tab-search');
+  var $count  = $c.find('.tab-count');
+  var $prev   = $c.find('.btn-tab-prev');
+  var $next   = $c.find('.btn-tab-next');
+  var $info   = $c.find('.tab-page-info');
+
+  function cellTxt(r, i) {
+    return $(r).find('td').eq(i).text().trim().toLowerCase();
+  }
+  function render() {
+    var n = filtered.length;
+    var pages = Math.max(1, Math.ceil(n / ps));
+    if (page > pages) page = pages;
+    $tbody.empty();
+    filtered.slice((page-1)*ps, page*ps).forEach(function(r){ $tbody.append(r); });
+    $count.text(n + (n===1?' registro':' registros'));
+    $info.text(page + ' / ' + pages);
+    $prev.prop('disabled', page <= 1);
+    $next.prop('disabled', page >= pages);
+    $c.find('th.srt').each(function(i){
+      $(this).find('.sa').text(i===sc ? (asc?'↑':'↓') : '↕');
+    });
+  }
+  $search.on('input', function(){
+    var q = this.value.toLowerCase().trim();
+    filtered = q ? all.filter(function(r){ return $(r).text().toLowerCase().indexOf(q)!==-1; }) : all.slice();
+    page = 1; render();
+  });
+  $prev.on('click', function(){ if(page>1){page--;render();} });
+  $next.on('click', function(){ page++;render(); });
+  $c.find('th.srt').each(function(i){
+    $(this).css('cursor','pointer').on('click', function(){
+      if(sc===i) asc=!asc; else{sc=i;asc=true;}
+      filtered.sort(function(a,b){
+        var ta=cellTxt(a,i), tb=cellTxt(b,i);
+        var na=parseFloat(ta.replace(/\./g,'').replace(',','.')),
+            nb=parseFloat(tb.replace(/\./g,'').replace(',','.'));
+        if(!isNaN(na)&&!isNaN(nb)) return asc?na-nb:nb-na;
+        return asc?ta.localeCompare(tb,'es'):tb.localeCompare(ta,'es');
+      });
+      page=1; render();
+    });
+  });
+  render();
+};
+</script>
+
 </body>
 </html>
