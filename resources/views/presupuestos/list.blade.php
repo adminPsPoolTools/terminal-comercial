@@ -26,13 +26,13 @@
           @endphp
           <tr>
             <td class="font-mono text-xs">
-              <a href="/presupuestos/{{ $row->CODIGO }}" class="text-blue-600 hover:underline font-semibold">
+              <a href="#" class="text-blue-600 hover:underline font-semibold">
                 {{ $row->CODIGO }}
               </a>
             </td>
             <td class="text-xs">{{ $row->FECHA ?? '—' }}</td>
             <td class="max-w-xs">
-              <a href="/clientes/{{ $row->CLIENTE ?? '' }}" class="text-blue-600 hover:underline text-xs">
+              <a href="{{ route('clientes.detalle', $row->CLIENTE ?? 0) }}" class="text-blue-600 hover:underline text-xs">
                 {{ $row->DESCRIPCION_CLIENTE ?? $row->CLIENTE ?? '—' }}
               </a>
             </td>

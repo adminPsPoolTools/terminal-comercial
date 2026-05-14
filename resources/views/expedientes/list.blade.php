@@ -8,7 +8,7 @@
       @foreach($expedientes as $row)
         @if(!is_null($row->CODIGO ?? null))
         <tr>
-          <td><a href="/expedientes/{{ $row->CODIGO }}" class="text-blue-600 hover:underline font-mono text-xs font-semibold">{{ $row->CODIGO }}</a></td>
+          <td><span class="font-mono text-xs font-semibold text-slate-700">{{ $row->CODIGO }}</span></td>
           <td class="text-xs">{{ $row->FECHA_ALTA ?? '—' }}</td>
           <td class="max-w-xs truncate text-sm font-medium">{{ $row->DESCRIPCION ?? '—' }}</td>
           <td><span class="badge {{ str_contains(strtolower($row->ESTADO ?? ''), 'abiert') ? 'badge-green' : (str_contains(strtolower($row->ESTADO ?? ''), 'cerr') ? 'badge-gray' : 'badge-yellow') }}">{{ $row->ESTADO ?? '—' }}</span></td>

@@ -8,9 +8,9 @@
       @foreach($pedidos as $row)
         @if(!is_null($row->CODIGO ?? null))
         <tr>
-          <td><a href="/pedidos/{{ $row->CODIGO }}" class="text-blue-600 hover:underline font-mono text-xs font-semibold">{{ $row->CODIGO }}</a></td>
+          <td><span class="font-mono text-xs font-semibold text-slate-700">{{ $row->CODIGO }}</span></td>
           <td class="text-xs">{{ $row->FECHA ?? '—' }}</td>
-          <td class="text-xs"><a href="/clientes/{{ $row->CLIENTE }}" class="text-blue-600 hover:underline">{{ $row->DESCRIPCION_CLIENTE ?? $row->CLIENTE ?? '—' }}</a></td>
+          <td class="text-xs"><a href="{{ route('clientes.detalle', $row->CLIENTE ?? 0) }}" class="text-blue-600 hover:underline">{{ $row->DESCRIPCION_CLIENTE ?? $row->CLIENTE ?? '—' }}</a></td>
           <td class="max-w-xs truncate text-sm">{{ $row->TITULO ?? '—' }}</td>
           <td><span class="badge badge-blue">{{ $row->DESCRIPCION_ESTADO ?? $row->ESTADO ?? '—' }}</span></td>
           <td><span class="badge {{ ($row->SERVIDO??'')==='T' ? 'badge-green' : (($row->SERVIDO??'')==='N' ? 'badge-red' : 'badge-yellow') }}">{{ match($row->SERVIDO??'') {'T'=>'Total','N'=>'Nada','P'=>'Parcial',default=>'—'} }}</span></td>

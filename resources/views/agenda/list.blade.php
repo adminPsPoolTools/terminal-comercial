@@ -27,7 +27,7 @@
             <td class="font-medium">{{ $row->FECHA ?? '—' }}</td>
             <td>{{ $row->HORA ?? '—' }}</td>
             <td class="max-w-xs truncate font-medium">
-              <a href="/agenda/{{ $row->CODIGO }}" class="text-blue-600 hover:underline">
+              <a href="#" class="text-blue-600 hover:underline">
                 {{ $row->TITULO ?? '—' }}
               </a>
             </td>

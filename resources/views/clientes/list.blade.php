@@ -15,7 +15,7 @@
         @endphp
         <tr>
           <td class="font-mono text-xs text-slate-400">{{ $row->CODIGO }}</td>
-          <td class="font-medium"><a href="/clientes/{{ $row->CODIGO }}" class="text-blue-600 hover:underline">{{ $row->DESCRIPCION ?? '—' }}</a></td>
+          <td class="font-medium"><a href="{{ route('clientes.detalle', $row->CODIGO) }}" class="text-blue-600 hover:underline">{{ $row->DESCRIPCION ?? '—' }}</a></td>
           <td class="text-xs text-slate-500">{{ $row->TELEFONOFIJO ?? '' }}{{ $row->TELEFONOFIJO && $row->TELEFONOMOVIL ? ' · ' : '' }}{{ $row->TELEFONOMOVIL ?? '' }}</td>
           <td class="text-xs"><span class="badge badge-blue">{{ $row->DESCRIPCIONCATEGORIA ?? '—' }}</span></td>
           <td class="td-right font-mono text-sm">{{ number_format($row->TIMPORTEBASE ?? 0, 2, ',', '.') }}€</td>
