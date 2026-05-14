@@ -10,8 +10,8 @@
         <tr>
           <td class="font-mono text-xs font-semibold">{{ $row->CODIGO }}</td>
           <td class="text-xs">{{ $row->FECHA ?? '—' }}</td>
-          <td class="text-xs text-blue-600"><a href="/clientes/{{ $row->CLIENTE ?? '' }}" class="hover:underline">{{ $row->DESCRIPCION_CLIENTE ?? $row->CLIENTE ?? '—' }}</a></td>
-          <td class="max-w-xs truncate text-sm">{{ $row->DESCRIPCION ?? '—' }}</td>
+          <td class="text-xs text-blue-600"><a href="/clientes/{{ $row->C_CODIGO ?? '' }}" class="hover:underline">{{ $row->CLIENTE ?? '—' }}</a></td>
+          <td class="max-w-xs truncate text-sm">{{ $row->ARTICULO ?? '—' }}</td>
           <td><span class="badge {{ str_contains(strtolower($row->ESTADO??''),'abierta')?'badge-orange':(str_contains(strtolower($row->ESTADO??''),'cerrada')?'badge-green':'badge-gray') }}">{{ $row->ESTADO ?? '—' }}</span></td>
           <td class="text-xs text-slate-500">{{ $row->TECNICO ?? '—' }}</td>
         </tr>

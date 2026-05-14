@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/marketing1/Downloads/**)",
+      "Bash(powershell -Command \"Expand-Archive -Path 'backup_140526.zip' -DestinationPath 'backup_140526_extracted' -Force\")"
+    ]
+  }
+}

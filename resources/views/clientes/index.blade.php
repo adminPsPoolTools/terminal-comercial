@@ -8,7 +8,7 @@
       <div class="filter-group w-full sm:w-auto"><label class="form-label">Categoría</label>
         <select id="sel-cat" class="form-select" style="min-width:140px">
           <option value="">Todas</option>
-          @foreach($categorias as $c)<option value="{{ $c->CODIGO }}">{{ $c->DESCRIPCION }}</option>@endforeach
+          @foreach($categorias as $c)<option value="{{ $c->CODIGO }}">{{ $c->DESCRIPCIONCATEGORIA }}</option>@endforeach
         </select></div>
       <button id="btn-buscar" onclick="buscar()" class="btn btn-primary shrink-0 self-end">@include('partials.icon',['name'=>'search']) Buscar</button>
       <button class="btn btn-secondary shrink-0 self-end">@include('partials.icon',['name'=>'plus']) Nuevo cliente</button>

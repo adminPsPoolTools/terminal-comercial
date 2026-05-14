@@ -31,7 +31,7 @@
                 {{ $row->TITULO ?? '—' }}
               </a>
             </td>
-            <td class="text-slate-500 text-xs">{{ $row->USUARIO ?? '—' }}</td>
+            <td class="text-slate-500 text-xs">{{ $row->USUARIO_ULTIMO_ESTADO ?? '—' }}</td>
             <td>
               @php
                 $estado = $row->ESTADO ?? '';
@@ -44,7 +44,7 @@
               @endphp
               <span class="badge {{ $class }}">{{ $estado ?: '—' }}</span>
             </td>
-            <td class="text-slate-500 text-xs">{{ $row->FECHA_PROG ?? '—' }}</td>
+            <td class="text-slate-500 text-xs">{{ $row->FECHA_ACTIVAR_ALARMA_AGENDA ?? '—' }}</td>
             <td class="td-right">
               @if(isset($row->CONTADOR_DIAS) && $row->CONTADOR_DIAS > 0)
                 <span class="badge {{ $row->CONTADOR_DIAS > 30 ? 'badge-red' : 'badge-yellow' }}">

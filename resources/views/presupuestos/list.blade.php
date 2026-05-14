@@ -21,8 +21,8 @@
         @foreach($presupuestos as $row)
           @if(!is_null($row->CODIGO ?? null))
           @php
-            $total    += $row->BASE_IMP ?? 0;
-            $totalIva += $row->IMP_C_IVA ?? 0;
+            $total    += $row->BASEIMPONIBLE ?? 0;
+            $totalIva += $row->TOTAL ?? 0;
           @endphp
           <tr>
             <td class="font-mono text-xs">
@@ -49,9 +49,9 @@
               @endphp
               <span class="badge {{ $cls }}">{{ $est ?: '—' }}</span>
             </td>
-            <td class="text-xs text-slate-500">{{ $row->NOMBRE_VENDEDOR ?? $row->VENDEDOR ?? '—' }}</td>
-            <td class="td-right font-mono text-sm">{{ number_format($row->BASE_IMP ?? 0, 2, ',', '.') }}€</td>
-            <td class="td-right font-mono text-sm font-semibold">{{ number_format($row->IMP_C_IVA ?? 0, 2, ',', '.') }}€</td>
+            <td class="text-xs text-slate-500">{{ $row->USUARIO_ALTA ?? '—' }}</td>
+            <td class="td-right font-mono text-sm">{{ number_format($row->BASEIMPONIBLE ?? 0, 2, ',', '.') }}€</td>
+            <td class="td-right font-mono text-sm font-semibold">{{ number_format($row->TOTAL ?? 0, 2, ',', '.') }}€</td>
           </tr>
           @endif
         @endforeach

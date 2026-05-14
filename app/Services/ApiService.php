@@ -93,12 +93,12 @@ class ApiService
 
     public function obtenerPresupuestos(array $filtros): array
     {
-        return $this->getArray('buscarPresupuestos', $filtros);
+        return $this->getArray('obtenerPresupuestosFichaCliente', $filtros);
     }
 
     public function obtenerEstadosPresupuesto(): array
     {
-        return $this->getArray('obtenerEstadosPresupuesto');
+        return $this->getArray('obtenerSelectEstadosPresupuesto');
     }
 
     public function buscarExpedientes(array $filtros): array
@@ -123,32 +123,32 @@ class ApiService
 
     public function buscarPedidos(array $filtros): array
     {
-        return $this->getArray('buscarPedidos', $filtros);
+        return $this->getArray('obtenerPedidosFichaCliente', $filtros);
     }
 
     public function obtenerEstadosPedido(): array
     {
-        return $this->getArray('obtenerEstadosPedido');
+        return $this->getArray('obtenerSelectEstadosPedido');
     }
 
     public function buscarClientes(array $filtros): array
     {
-        return $this->getArray('buscarClientes', $filtros);
+        return $this->getArray('obtenerListadoClientes', $filtros);
     }
 
     public function obtenerCliente(string $codigo): ?object
     {
-        return $this->getItem('obtenerCliente', ['codigo' => $codigo]);
+        return $this->getItem('obtenerDetalleFichaCliente', ['cliente' => $codigo]);
     }
 
     public function obtenerCategorias(): array
     {
-        return $this->getArray('obtenerCategorias');
+        return $this->getArray('obtenerCategoriasCliente');
     }
 
     public function obtenerTipos(): array
     {
-        return $this->getArray('obtenerTipos');
+        return $this->getArray('obtenerTiposCliente');
     }
 
     public function buscarArticulos(array $filtros): array
@@ -158,7 +158,7 @@ class ApiService
 
     public function buscarIncidenciasSat(array $filtros): array
     {
-        return $this->getArray('buscarIncidenciasSat', $filtros);
+        return $this->getArray('buscarIncidencias', $filtros);
     }
 
     public function obtenerEstadosIncidencia(): array
