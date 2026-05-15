@@ -133,7 +133,7 @@ class ClientesController extends Controller
     {
         $comercial = (int) session('comercial_id');
         $visitas   = $this->api->obtenerVisitasCliente($codigo, $comercial);
-        return view('clientes.tabs.visitas', compact('visitas'));
+        return view('clientes.tabs.visitas', compact('visitas', 'codigo'));
     }
 
     public function tabIncidencias(string $codigo)

@@ -246,6 +246,26 @@ class ApiService
         return $this->getArray('obtenerArticulosAlbaran', ['albaran' => $codigo]);
     }
 
+    public function obtenerMotivosVisitas(): array
+    {
+        return $this->getArray('obtenerMotivosVisitas');
+    }
+
+    public function obtenerListaAccionesVisitas(): array
+    {
+        return $this->getArray('obtenerAccionesVisitas');
+    }
+
+    public function obtenerListaAsuntosVisitas(): array
+    {
+        return $this->getArray('obtenerAsuntosAccionesVisitas');
+    }
+
+    public function crearVisitaComercial(array $datos): ?object
+    {
+        return $this->normalizeItem($this->post('crearVisitaComercial', $datos));
+    }
+
     public function obtenerDetalleVisita(string $codigo): ?object
     {
         return $this->getItem('obtenerDetalleVisita', ['codigo' => $codigo]);

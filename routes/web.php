@@ -77,6 +77,8 @@ Route::middleware('auth.comercial')->group(function () {
     Route::get('/albaranes/{codigo}', [AlbaranesController::class, 'detalle'])->name('albaranes.detalle');
 
     // Visitas comerciales
+    Route::get('/visitas/crear',    [VisitasController::class, 'crear'])->name('visitas.crear');
+    Route::post('/visitas',         [VisitasController::class, 'store'])->name('visitas.store');
     Route::get('/visitas/{codigo}', [VisitasController::class, 'detalle'])->name('visitas.detalle');
 
     // Solicitudes de presupuesto
