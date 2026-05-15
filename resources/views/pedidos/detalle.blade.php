@@ -67,22 +67,31 @@
     @if(empty($lineas))
       <div class="empty-state">Sin líneas.</div>
     @else
-    <div class="table-wrapper">
-      <table class="crm-table">
+    <div class="table-wrapper" style="overflow-x:hidden">
+      <table class="crm-table" style="table-layout:fixed; width:100%">
+        <colgroup>
+          <col style="width:100px">
+          <col>
+          <col style="width:70px">
+          <col style="width:70px">
+          <col style="width:90px">
+          <col style="width:70px">
+          <col style="width:100px">
+        </colgroup>
         <thead><tr>
           <th>Artículo</th><th>Descripción</th>
           <th class="td-right">Cant.</th><th class="td-right">Servida</th>
-          <th class="td-right">PVP</th><th class="td-right">Dto. %</th><th class="td-right">Importe</th>
+          <th class="td-right">PVP</th><th class="td-right">Dto.%</th><th class="td-right">Importe</th>
         </tr></thead>
         <tbody>
           @foreach($lineas as $lin)
           <tr>
             <td class="font-mono text-xs font-semibold">{{ $lin->ARTICULO ?? '—' }}</td>
-            <td class="text-sm">{{ $lin->DESCRIPCION ?? '—' }}</td>
+            <td class="text-xs text-slate-700" style="word-break:break-word; white-space:normal">{{ $lin->DESCRIPCION ?? '—' }}</td>
             <td class="td-right text-xs font-mono">{{ number_format((float)($lin->CANTIDAD??0),2,',','.') }}</td>
             <td class="td-right text-xs font-mono">{{ number_format((float)($lin->SERVIDA??0),2,',','.') }}</td>
             <td class="td-right text-xs font-mono">{{ number_format((float)($lin->PVP??0),2,',','.').' €' }}</td>
-            <td class="td-right text-xs">{{ $lin->DTO ?? 0 }} %</td>
+            <td class="td-right text-xs">{{ $lin->DTO ?? 0 }}%</td>
             <td class="td-right text-xs font-mono font-semibold">{{ number_format((float)($lin->IMPORTE??0),2,',','.').' €' }}</td>
           </tr>
           @endforeach
