@@ -38,7 +38,8 @@ class PresupuestosController extends Controller
         ];
 
         $presupuestos = $this->api->obtenerPresupuestos($filtros);
-        return view('presupuestos.list', compact('presupuestos', 'comercial'));
+        $hideCliente  = !empty($filtros['cliente']);
+        return view('presupuestos.list', compact('presupuestos', 'comercial', 'hideCliente'));
     }
 
     public function detalle(string $codigo)
