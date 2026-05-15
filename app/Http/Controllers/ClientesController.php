@@ -146,7 +146,7 @@ class ClientesController extends Controller
     {
         $filtro      = $request->input('filtro', '');
         $solicitudes = $this->api->obtenerSolicitudesPresupuestoCliente($codigo, $filtro);
-        return view('clientes.tabs.solicitudes', compact('solicitudes'));
+        return view('clientes.tabs.solicitudes', compact('solicitudes', 'codigo'));
     }
 
     public function tabVentasSgfa(string $codigo, Request $request)

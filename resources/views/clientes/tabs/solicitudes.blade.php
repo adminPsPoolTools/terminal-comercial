@@ -8,6 +8,7 @@
       <input type="text" class="tab-search form-input pl-8 py-1.5 text-xs w-52" placeholder="Buscar solicitudes...">
     </div>
     <span class="tab-count text-xs text-slate-400"></span>
+    <a href="{{ route('solicitudes.crear', ['cliente' => $codigo ?? '']) }}" class="btn btn-sm btn-primary">+ Nueva solicitud</a>
     <div class="ml-auto flex items-center gap-2">
       <button class="btn-tab-prev btn btn-sm btn-secondary" disabled>‹ Ant.</button>
       <span class="tab-page-info text-xs text-slate-500 w-14 text-center font-medium"></span>

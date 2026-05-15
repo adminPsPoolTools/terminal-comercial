@@ -82,6 +82,8 @@ Route::middleware('auth.comercial')->group(function () {
     Route::get('/visitas/{codigo}', [VisitasController::class, 'detalle'])->name('visitas.detalle');
 
     // Solicitudes de presupuesto
+    Route::get('/solicitudes/crear',    [SolicitudesController::class, 'crear'])->name('solicitudes.crear');
+    Route::post('/solicitudes',         [SolicitudesController::class, 'store'])->name('solicitudes.store');
     Route::get('/solicitudes/{codigo}', [SolicitudesController::class, 'detalle'])->name('solicitudes.detalle');
 
     // Listados

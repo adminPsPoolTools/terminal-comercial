@@ -298,6 +298,36 @@ class ApiService
         return $this->getArray('obtenerAsuntosVisitaPorCodigo', ['codigo' => $codigo]);
     }
 
+    public function obtenerSiguienteCodigoSolicitud(): ?object
+    {
+        return $this->getItem('obtenerSiguienteCodigoSolicitudPresupuesto');
+    }
+
+    public function obtenerProyectosSolicitud(): array
+    {
+        return $this->getArray('obtenerOpcionesProyectoSolicitudPresupuesto');
+    }
+
+    public function obtenerCaracteresSolicitud(): array
+    {
+        return $this->getArray('obtenerOpcionesCaracterSolicitudPresupuesto');
+    }
+
+    public function obtenerCategoriasSolicitud(): array
+    {
+        return $this->getArray('obtenerOpcionesCategoriaSolicitudPresupuesto');
+    }
+
+    public function obtenerCorreosCliente(string $cliente): array
+    {
+        return $this->getArray('obtenerCorreosRelacionadosCliente', ['cliente' => $cliente]);
+    }
+
+    public function crearSolicitudPresupuesto(array $datos): ?object
+    {
+        return $this->normalizeItem($this->post('crearSolicitudPresupuesto', $datos));
+    }
+
     public function obtenerDetalleSolicitud(string $codigo): ?object
     {
         return $this->getItem('obtenerSolicitudPresupuestoPorCodigo', ['codigo' => $codigo, 'visita_comercial' => '']);
