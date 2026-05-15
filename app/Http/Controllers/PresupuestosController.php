@@ -40,11 +40,6 @@ class PresupuestosController extends Controller
         $presupuestos = $this->api->obtenerPresupuestos($filtros);
         $hideCliente  = !empty($filtros['cliente']);
 
-        // DEBUG TEMPORAL — borrar después
-        if (!empty($presupuestos)) {
-            dd(array_keys((array) $presupuestos[0]));
-        }
-
         return view('presupuestos.list', compact('presupuestos', 'comercial', 'hideCliente'));
     }
 
