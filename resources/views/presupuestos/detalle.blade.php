@@ -86,42 +86,37 @@
     @if(empty($lineas))
       <div class="empty-state">Sin líneas.</div>
     @else
-    <div class="table-wrapper" style="overflow-x:hidden">
-      <table class="crm-table" style="table-layout:fixed; width:100%">
-        <colgroup>
-          <col style="width:100px">{{-- Artículo --}}
-          <col>{{-- Descripción: ocupa el resto --}}
-          <col style="width:70px">{{-- Cant. --}}
-          <col style="width:90px">{{-- PVP --}}
-          <col style="width:70px">{{-- Dto. % --}}
-          <col style="width:100px">{{-- Importe --}}
-        </colgroup>
+    <div class="table-wrapper" style="overflow-x:auto; -webkit-overflow-scrolling:touch">
+      <table class="crm-table" style="min-width:560px">
         <thead><tr>
-          <th>Artículo</th><th>Descripción</th>
-          <th class="td-right">Cant.</th><th class="td-right">PVP</th>
-          <th class="td-right">Dto.%</th><th class="td-right">Importe</th>
+          <th style="min-width:90px">Artículo</th>
+          <th style="min-width:200px">Descripción</th>
+          <th class="td-right" style="min-width:60px">Cant.</th>
+          <th class="td-right" style="min-width:80px">PVP</th>
+          <th class="td-right" style="min-width:60px">Dto.%</th>
+          <th class="td-right" style="min-width:90px">Importe</th>
         </tr></thead>
         <tbody>
           @foreach($lineas as $lin)
           <tr>
-            <td class="font-mono text-xs font-semibold">{{ $lin->ARTICULO ?? '—' }}</td>
-            <td class="text-xs text-slate-700" style="word-break:break-word; white-space:normal">
+            <td class="font-mono text-xs font-semibold whitespace-nowrap">{{ $lin->ARTICULO ?? '—' }}</td>
+            <td class="text-xs text-slate-700" style="white-space:normal; word-break:break-word; min-width:200px; max-width:320px">
               {{ $lin->DESCRIPCION ?? '—' }}
               @if(!empty($lin->COMENTARIO))
                 <p class="text-xs text-slate-400 mt-0.5">{{ $lin->COMENTARIO }}</p>
               @endif
             </td>
-            <td class="td-right text-xs font-mono">{{ number_format((float)($lin->CANTIDAD??0),2,',','.') }}</td>
-            <td class="td-right text-xs font-mono">{{ number_format((float)($lin->PVP??0),2,',','.').' €' }}</td>
-            <td class="td-right text-xs">{{ $lin->DTO ?? 0 }}%</td>
-            <td class="td-right text-xs font-mono font-semibold">{{ number_format((float)($lin->IMPORTE??0),2,',','.').' €' }}</td>
+            <td class="td-right text-xs font-mono whitespace-nowrap">{{ number_format((float)($lin->CANTIDAD??0),2,',','.') }}</td>
+            <td class="td-right text-xs font-mono whitespace-nowrap">{{ number_format((float)($lin->PVP??0),2,',','.').' €' }}</td>
+            <td class="td-right text-xs whitespace-nowrap">{{ $lin->DTO ?? 0 }}%</td>
+            <td class="td-right text-xs font-mono font-semibold whitespace-nowrap">{{ number_format((float)($lin->IMPORTE??0),2,',','.').' €' }}</td>
           </tr>
           @endforeach
         </tbody>
         <tfoot>
           <tr class="total-row">
-            <td colspan="5" class="text-right text-xs text-slate-500 pr-4">Total</td>
-            <td class="td-right font-mono font-bold text-sm">{{ number_format(array_sum(array_map(fn($l)=>(float)($l->IMPORTE??0),$lineas)),2,',','.').' €' }}</td>
+            <td colspan="5" class="text-right text-xs text-slate-500 pr-4 whitespace-nowrap">Total</td>
+            <td class="td-right font-mono font-bold text-sm whitespace-nowrap">{{ number_format(array_sum(array_map(fn($l)=>(float)($l->IMPORTE??0),$lineas)),2,',','.').' €' }}</td>
           </tr>
         </tfoot>
       </table>
