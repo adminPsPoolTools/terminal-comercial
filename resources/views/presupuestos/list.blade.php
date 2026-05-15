@@ -77,17 +77,8 @@ $totalIva += $row->IMP_C_IVA ?? $row->TOTAL ?? 0;
           @endif
           <td class="text-xs text-slate-600" style="word-break:break-word; white-space:normal">{{ $row->TITULO ?? '—' }}
           </td>
-          <td>
-            @php
-            $est = $row->DESCRIPCION_ESTADO ?? $row->ESTADO ?? '';
-            $cls = match(true) {
-            str_contains(strtolower($est), 'acept') => 'badge-green',
-            str_contains(strtolower($est), 'rechaz') => 'badge-red',
-            str_contains(strtolower($est), 'espera') => 'badge-yellow',
-            default => 'badge-gray',
-            };
-            @endphp
-            <span class="badge {{ $cls }}">{{ $est ?: '—' }}</span>
+          <td class="presup-estado" data-codigo="{{ $row->CODIGO }}">
+            <span class="text-slate-300 text-xs">·</span>
           </td>
           <td class="text-xs text-slate-500 overflow-hidden" style="word-break:break-word">{{ $row->NOMBRE_VENDEDOR ??
             $row->VENDEDOR ?? $row->USUARIO_ALTA ?? '—' }}</td>
@@ -111,7 +102,17 @@ $totalIva += $row->IMP_C_IVA ?? $row->TOTAL ?? 0;
   </div>
 </div>
 <script>
-  window.initCrmTable && window.initCrmTable('ct-presup');
+window.initCrmTable && window.initCrmTable('ct-presup');
+(function loadEstados() {
+  var base = '{{ rtrim(url("/"), "/") }}';
+  document.querySelectorAll('#ct-presup .presup-estado').forEach(function(td) {
+    var cod = td.dataset.codigo;
+    if (!cod) return;
+    $.get(base + '/presupuestos/' + cod + '/estado', function(html) {
+      td.innerHTML = html;
+    });
+  });
+})();
 </script>
 
 @endif

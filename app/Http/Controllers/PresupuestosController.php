@@ -53,6 +53,20 @@ class PresupuestosController extends Controller
         return view('presupuestos.detalle', compact('cabecera', 'lineas', 'codigo', 'estados', 'estadoActual', 'comentarioAct'));
     }
 
+    public function estado(string $codigo)
+    {
+        $obj    = $this->api->obtenerEstadoActualPresupuesto($codigo);
+        $estado = $obj?->ESTADO ?? '';
+        $cls    = match(true) {
+            str_contains(strtolower($estado), 'acept')  => 'badge-green',
+            str_contains(strtolower($estado), 'rechaz') => 'badge-red',
+            str_contains(strtolower($estado), 'espera') => 'badge-yellow',
+            default => 'badge-gray',
+        };
+        $badge = $estado ? "<span class=\"badge {$cls}\">{$estado}</span>" : '<span class="text-slate-300 text-xs">—</span>';
+        return response($badge)->header('Content-Type', 'text/html');
+    }
+
     public function update(Request $request, string $codigo)
     {
         $ok = $this->api->actualizarPresupuesto(

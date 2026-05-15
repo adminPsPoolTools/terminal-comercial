@@ -140,9 +140,9 @@
           <select name="estado" class="form-select">
             <option value="">— Sin cambio —</option>
             @foreach($estados as $est)
-              @php $estCod = $est->CODIGO ?? $est->ESTADO ?? ''; @endphp
-              <option value="{{ $estCod }}" {{ $estadoActual == $estCod ? 'selected' : '' }}>
-                {{ $est->DESCRIPCION ?? $est->DESCRIPCION_ESTADO ?? $estCod }}
+              @php $estVal = $est->ESTADO ?? $est->CODIGO ?? ''; @endphp
+              <option value="{{ $estVal }}" {{ $estadoActual === $estVal ? 'selected' : '' }}>
+                {{ $estVal }}
               </option>
             @endforeach
           </select>
