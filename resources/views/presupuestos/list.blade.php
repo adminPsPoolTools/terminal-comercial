@@ -31,61 +31,46 @@ $totalIva += $row->IMP_C_IVA ?? $row->TOTAL ?? 0;
       <button class="btn-tab-next btn btn-sm btn-secondary">Sig. ›</button>
     </div>
   </div>
-  <div class="table-wrapper" style="overflow-x:hidden">
-    <table class="crm-table" style="table-layout:fixed; width:100%">
-      <colgroup>
-        <col style="width:90px">
-        <col style="width:88px">
-        @if(!$hideCliente)
-        <col style="width:160px">@endif
-        <col style="width:180px">{{-- Título --}}
-        <col style="width:120px">
-        <col style="width:90px">
-        <col style="width:100px">
-        <col style="width:100px">
-      </colgroup>
+  <div class="table-wrapper" style="overflow-x:auto; -webkit-overflow-scrolling:touch">
+    <table class="crm-table" style="min-width:640px">
       <thead>
         <tr>
-          <th class="srt">Código <span class="sa text-slate-300">↕</span></th>
-          <th class="srt">Fecha <span class="sa text-slate-300">↕</span></th>
+          <th class="srt whitespace-nowrap" style="min-width:80px">Código <span class="sa text-slate-300">↕</span></th>
+          <th class="srt whitespace-nowrap" style="min-width:85px">Fecha <span class="sa text-slate-300">↕</span></th>
           @if(!$hideCliente)
-          <th class="srt">Cliente <span class="sa text-slate-300">↕</span></th>
+          <th class="srt" style="min-width:140px">Cliente <span class="sa text-slate-300">↕</span></th>
           @endif
-          <th class="srt">Título <span class="sa text-slate-300">↕</span></th>
-          <th class="srt">Estado <span class="sa text-slate-300">↕</span></th>
-          <th class="srt">Comercial <span class="sa text-slate-300">↕</span></th>
-          <th class="srt td-right">Base Imp. <span class="sa text-slate-300">↕</span></th>
-          <th class="srt td-right">C/IVA <span class="sa text-slate-300">↕</span></th>
+          <th class="srt" style="min-width:160px; max-width:260px">Título <span class="sa text-slate-300">↕</span></th>
+          <th class="srt whitespace-nowrap" style="min-width:100px">Estado <span class="sa text-slate-300">↕</span></th>
+          <th class="srt" style="min-width:80px">Comercial <span class="sa text-slate-300">↕</span></th>
+          <th class="srt td-right whitespace-nowrap" style="min-width:90px">Base Imp. <span class="sa text-slate-300">↕</span></th>
+          <th class="srt td-right whitespace-nowrap" style="min-width:90px">C/IVA <span class="sa text-slate-300">↕</span></th>
         </tr>
       </thead>
       <tbody>
         @foreach($presupuestos as $row)
         @if(!is_null($row->CODIGO ?? null))
         <tr>
-          <td class="font-mono text-xs font-semibold">
+          <td class="font-mono text-xs font-semibold whitespace-nowrap">
             <a href="{{ route('presupuestos.detalle', $row->CODIGO) }}" class="text-blue-600 hover:underline">
               {{ $row->CODIGO }}
             </a>
           </td>
-          <td class="text-xs">{{ $row->FECHA ?? '—' }}</td>
+          <td class="text-xs whitespace-nowrap">{{ $row->FECHA ?? '—' }}</td>
           @if(!$hideCliente)
-          <td class="text-xs overflow-hidden" style="word-break:break-word">
+          <td class="text-xs" style="white-space:normal; word-break:break-word; max-width:160px">
             <a href="{{ route('clientes.detalle', $row->CLIENTE ?? 0) }}" class="text-blue-600 hover:underline">
               {{ $row->DESCRIPCION_CLIENTE ?? $row->CLIENTE ?? '—' }}
             </a>
           </td>
           @endif
-          <td class="text-xs text-slate-600" style="word-break:break-word; white-space:normal">{{ $row->TITULO ?? '—' }}
-          </td>
-          <td class="presup-estado" data-codigo="{{ $row->CODIGO }}">
+          <td class="text-xs text-slate-600" style="white-space:normal; word-break:break-word; max-width:260px">{{ $row->TITULO ?? '—' }}</td>
+          <td class="presup-estado whitespace-nowrap" data-codigo="{{ $row->CODIGO }}">
             <span class="text-slate-300 text-xs">·</span>
           </td>
-          <td class="text-xs text-slate-500 overflow-hidden" style="word-break:break-word">{{ $row->NOMBRE_VENDEDOR ??
-            $row->VENDEDOR ?? $row->USUARIO_ALTA ?? '—' }}</td>
-          <td class="td-right font-mono text-sm">{{ number_format((float)($row->BASE_IMP ?? $row->BASEIMPONIBLE ?? 0),
-            2, ',', '.') }}€</td>
-          <td class="td-right font-mono text-sm font-semibold">{{ number_format((float)($row->IMP_C_IVA ?? $row->TOTAL
-            ?? 0), 2, ',', '.') }}€</td>
+          <td class="text-xs text-slate-500" style="white-space:normal; word-break:break-word; max-width:100px">{{ $row->NOMBRE_VENDEDOR ?? $row->VENDEDOR ?? $row->USUARIO_ALTA ?? '—' }}</td>
+          <td class="td-right font-mono text-sm whitespace-nowrap">{{ number_format((float)($row->BASE_IMP ?? $row->BASEIMPONIBLE ?? 0), 2, ',', '.') }}€</td>
+          <td class="td-right font-mono text-sm font-semibold whitespace-nowrap">{{ number_format((float)($row->IMP_C_IVA ?? $row->TOTAL ?? 0), 2, ',', '.') }}€</td>
         </tr>
         @endif
         @endforeach
