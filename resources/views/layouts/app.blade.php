@@ -280,11 +280,17 @@ window.initCrmTable = function(cid) {
   });
   $prev.on('click', function(){ if(page>1){page--;render();} });
   $next.on('click', function(){ page++;render(); });
+  function parseDateVal(s) {
+    var m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    return m ? m[3]+m[2]+m[1] : null;
+  }
   $c.find('th.srt').each(function(i){
     $(this).css('cursor','pointer').on('click', function(){
       if(sc===i) asc=!asc; else{sc=i;asc=true;}
       filtered.sort(function(a,b){
         var ta=cellTxt(a,i), tb=cellTxt(b,i);
+        var da=parseDateVal(ta), db=parseDateVal(tb);
+        if(da&&db) return asc?da.localeCompare(db):db.localeCompare(da);
         var na=parseFloat(ta.replace(/\./g,'').replace(',','.')),
             nb=parseFloat(tb.replace(/\./g,'').replace(',','.'));
         if(!isNaN(na)&&!isNaN(nb)) return asc?na-nb:nb-na;
