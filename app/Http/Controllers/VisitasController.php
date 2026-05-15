@@ -27,30 +27,42 @@ class VisitasController extends Controller
         $comercial = (int) session('comercial_id');
         $cliente   = $request->input('cliente', '');
 
+        // Obtener código nuevo antes de crear
+        $codigoObj = $this->api->obtenerNuevoCodigoVisita();
+        $codigo    = $codigoObj?->ULTIMOCODIGO ?? null;
+
+        if (!$codigo) {
+            return back()->withInput()->with('error', 'No se pudo obtener un código para la visita.');
+        }
+
+        // Campos opcionales: enviar 0 si vacíos (SQL Server no acepta null en esas columnas)
         $datos = [
             'vendedor'          => $comercial,
             'cliente'           => $cliente,
             'proyecto'          => $request->input('proyecto', '1'),
-            'fecha'             => $request->input('fecha', date('d/m/Y')),
+            'fecha'             => $request->input('fecha', date('Y-m-d')),
             'hora'              => $request->input('hora', date('H:i')),
             'tipo'              => $request->input('tipo', '0'),
-            'motivo'            => $request->input('motivo', ''),
+            'motivo'            => $request->input('motivo') ?: '0',
             'comentario_motivo' => $request->input('comentario_motivo', ''),
-            'contacto'          => $request->input('contacto', ''),
-            'lineaDireccion'    => $request->input('lineaDireccion', ''),
+            'contacto'          => $request->input('contacto') ?: '0',
+            'lineaDireccion'    => $request->input('lineaDireccion') ?: '0',
             'comentario'        => $request->input('comentario', ''),
-            'acciones'          => implode(',', $request->input('acciones', [])),
-            'asuntos'           => implode(',', $request->input('asuntos', [])),
-            'codigo'            => '',
+            'codigo'            => $codigo,
         ];
 
         $res = $this->api->crearVisitaComercial($datos);
 
-        if ($res) {
-            $destino = $cliente
+        if ($res !== null) {
+            // Asignar acciones y asuntos en llamadas separadas
+            $acciones = implode(',', $request->input('acciones', []));
+            $asuntos  = implode(',', $request->input('asuntos', []));
+            if ($acciones) $this->api->asignarAccionesVisita((string) $codigo, $acciones);
+            if ($asuntos)  $this->api->asignarAsuntosVisita((string) $codigo, $asuntos);
+
+            return $cliente
                 ? redirect()->route('clientes.detalle', $cliente)->with('success', 'Visita creada correctamente.')
-                : redirect()->route('visitas.detalle', $res->CODIGO ?? $res->codigo ?? 0)->with('success', 'Visita creada correctamente.');
-            return $destino;
+                : redirect()->route('visitas.detalle', $codigo)->with('success', 'Visita creada correctamente.');
         }
 
         return back()->withInput()->with('error', 'Error al crear la visita.');

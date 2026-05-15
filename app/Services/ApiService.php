@@ -261,9 +261,26 @@ class ApiService
         return $this->getArray('obtenerAsuntosAccionesVisitas');
     }
 
+    public function obtenerNuevoCodigoVisita(): ?object
+    {
+        return $this->getItem('obtenerNuevoCodigoVisita');
+    }
+
     public function crearVisitaComercial(array $datos): ?object
     {
         return $this->normalizeItem($this->post('crearVisitaComercial', $datos));
+    }
+
+    public function asignarAccionesVisita(string $codigo, string $acciones): bool
+    {
+        $result = $this->post('asignarAccionesVisita', ['codigo' => $codigo, 'acciones' => $acciones]);
+        return $result !== null;
+    }
+
+    public function asignarAsuntosVisita(string $codigo, string $asuntos): bool
+    {
+        $result = $this->post('asignarAsuntosVisita', ['codigo' => $codigo, 'asuntos' => $asuntos]);
+        return $result !== null;
     }
 
     public function obtenerDetalleVisita(string $codigo): ?object
