@@ -102,14 +102,22 @@ $totalIva += $row->IMP_C_IVA ?? $row->TOTAL ?? 0;
   </div>
 </div>
 <script>
+// Capturar referencias a TODAS las celdas antes de que initCrmTable oculte las filas
+var _estadoCells = {};
+document.querySelectorAll('#ct-presup .presup-estado').forEach(function(td) {
+  if (td.dataset.codigo) _estadoCells[td.dataset.codigo] = td;
+});
+
 window.initCrmTable && window.initCrmTable('ct-presup');
-(function loadEstados() {
+
+// Una sola llamada batch para todos los presupuestos
+(function() {
+  var codigos = Object.keys(_estadoCells);
+  if (!codigos.length) return;
   var base = '{{ rtrim(url("/"), "/") }}';
-  document.querySelectorAll('#ct-presup .presup-estado').forEach(function(td) {
-    var cod = td.dataset.codigo;
-    if (!cod) return;
-    $.get(base + '/presupuestos/' + cod + '/estado', function(html) {
-      td.innerHTML = html;
+  $.get(base + '/presupuestos/estados/batch', { codigos: codigos.join(',') }, function(data) {
+    Object.keys(data).forEach(function(cod) {
+      if (_estadoCells[cod]) _estadoCells[cod].innerHTML = data[cod];
     });
   });
 })();

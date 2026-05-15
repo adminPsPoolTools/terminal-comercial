@@ -53,6 +53,28 @@ class PresupuestosController extends Controller
         return view('presupuestos.detalle', compact('cabecera', 'lineas', 'codigo', 'estados', 'estadoActual', 'comentarioAct'));
     }
 
+    public function estadosBatch(Request $request)
+    {
+        $codigos = array_filter(explode(',', $request->input('codigos', '')));
+        $result  = [];
+        foreach ($codigos as $cod) {
+            $cod = trim($cod);
+            if ($cod === '') continue;
+            $obj    = $this->api->obtenerEstadoActualPresupuesto($cod);
+            $estado = $obj?->ESTADO ?? '';
+            $cls    = match(true) {
+                str_contains(strtolower($estado), 'acept')  => 'badge-green',
+                str_contains(strtolower($estado), 'rechaz') => 'badge-red',
+                str_contains(strtolower($estado), 'espera') => 'badge-yellow',
+                default => 'badge-gray',
+            };
+            $result[$cod] = $estado
+                ? "<span class=\"badge {$cls}\">{$estado}</span>"
+                : '<span class="text-slate-300 text-xs">—</span>';
+        }
+        return response()->json($result);
+    }
+
     public function estado(string $codigo)
     {
         $obj    = $this->api->obtenerEstadoActualPresupuesto($codigo);

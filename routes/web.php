@@ -57,6 +57,7 @@ Route::middleware('auth.comercial')->group(function () {
     Route::get('/presupuestos/poblaciones', [PresupuestosController::class, 'poblaciones'])->name('presupuestos.poblaciones');
     Route::get('/presupuestos/{codigo}',            [PresupuestosController::class, 'detalle'])->name('presupuestos.detalle');
     Route::get('/presupuestos/{codigo}/estado',     [PresupuestosController::class, 'estado'])->name('presupuestos.estado');
+    Route::get('/presupuestos/estados/batch',       [PresupuestosController::class, 'estadosBatch'])->name('presupuestos.estados.batch');
     Route::post('/presupuestos/{codigo}/actualizar',[PresupuestosController::class, 'update'])->name('presupuestos.update');
 
     // Expedientes
