@@ -31,8 +31,8 @@
         @foreach($albaranes as $row)
         <tr>
           <td class="font-mono text-xs font-semibold">
-            <a href="{{ route('albaranes.detalle', $row->CODIGO ?? 0) }}" class="text-blue-600 hover:underline">
-              {{ $row->CODIGO ?? '—' }}
+            <a href="{{ route('albaranes.detalle', (int)($row->CODIGO ?? 0)) }}" class="text-blue-600 hover:underline">
+              {{ $row->CODIGO ? (int)$row->CODIGO : '—' }}
             </a>
           </td>
           <td class="text-xs">{{ $row->FECHA ?? '—' }}</td>

@@ -37,7 +37,8 @@ class PedidosController extends Controller
             'estado_servido'  => $request->input('estado_servido', ''),
         ];
 
-        $pedidos = $this->api->buscarPedidos($filtros);
-        return view('pedidos.list', compact('pedidos', 'comercial'));
+        $pedidos     = $this->api->buscarPedidos($filtros);
+        $hideCliente = !empty($filtros['cliente']);
+        return view('pedidos.list', compact('pedidos', 'comercial', 'hideCliente'));
     }
 }

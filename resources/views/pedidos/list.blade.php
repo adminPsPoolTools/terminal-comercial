@@ -17,10 +17,11 @@
   <div class="table-wrapper">
     <table class="crm-table">
       <thead>
+        @php $hideCliente = $hideCliente ?? false; @endphp
         <tr>
           <th class="srt">Código <span class="sa text-slate-300">↕</span></th>
           <th class="srt">Fecha <span class="sa text-slate-300">↕</span></th>
-          <th class="srt">Cliente <span class="sa text-slate-300">↕</span></th>
+          @if(!$hideCliente)<th class="srt">Cliente <span class="sa text-slate-300">↕</span></th>@endif
           <th class="srt">Título <span class="sa text-slate-300">↕</span></th>
           <th class="srt">Estado <span class="sa text-slate-300">↕</span></th>
           <th class="srt">Servido <span class="sa text-slate-300">↕</span></th>
@@ -37,11 +38,13 @@
               </a>
             </td>
             <td class="text-xs">{{ $row->FECHA ?? '—' }}</td>
+            @if(!$hideCliente)
             <td class="text-xs">
               <a href="{{ route('clientes.detalle', $row->CLIENTE ?? 0) }}" class="text-blue-600 hover:underline">
                 {{ $row->DESCRIPCION_CLIENTE ?? $row->CLIENTE ?? '—' }}
               </a>
             </td>
+            @endif
             <td class="max-w-xs truncate text-sm">{{ $row->TITULO ?? '—' }}</td>
             <td><span class="badge badge-blue">{{ $row->DESCRIPCION_ESTADO ?? $row->ESTADO ?? '—' }}</span></td>
             <td>
