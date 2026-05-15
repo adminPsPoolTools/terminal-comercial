@@ -79,7 +79,7 @@ $totalIva += $row->IMP_C_IVA ?? $row->TOTAL ?? 0;
           </td>
           <td>
             @php
-            $est = $row->ESTADO ?? $row->ESTADO ?? '';
+            $est = $row->DESCRIPCION_ESTADO ?? $row->ESTADO ?? '';
             $cls = match(true) {
             str_contains(strtolower($est), 'acept') => 'badge-green',
             str_contains(strtolower($est), 'rechaz') => 'badge-red',
