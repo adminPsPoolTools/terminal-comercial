@@ -65,8 +65,21 @@ $totalIva += $row->IMP_C_IVA ?? $row->TOTAL ?? 0;
           </td>
           @endif
           <td class="text-xs text-slate-600" style="white-space:normal; word-break:break-word; max-width:260px">{{ $row->TITULO ?? '—' }}</td>
-          <td class="presup-estado whitespace-nowrap" data-codigo="{{ $row->CODIGO }}">
-            <span class="text-slate-300 text-xs">·</span>
+          <td class="whitespace-nowrap">
+            @php
+              $est = $row->DESCRIPCION_ESTADO ?? $row->ESTADO ?? '';
+              $cls = match(true) {
+                str_contains(strtolower($est), 'acept')  => 'badge-green',
+                str_contains(strtolower($est), 'rechaz') => 'badge-red',
+                str_contains(strtolower($est), 'espera') => 'badge-yellow',
+                default => 'badge-gray',
+              };
+            @endphp
+            @if($est)
+              <span class="badge {{ $cls }}">{{ $est }}</span>
+            @else
+              <span class="text-slate-300 text-xs">—</span>
+            @endif
           </td>
           <td class="text-xs text-slate-500" style="white-space:normal; word-break:break-word; max-width:100px">{{ $row->NOMBRE_VENDEDOR ?? $row->VENDEDOR ?? $row->USUARIO_ALTA ?? '—' }}</td>
           <td class="td-right font-mono text-sm whitespace-nowrap">{{ number_format((float)($row->BASE_IMP ?? $row->BASEIMPONIBLE ?? 0), 2, ',', '.') }}€</td>
@@ -87,23 +100,7 @@ $totalIva += $row->IMP_C_IVA ?? $row->TOTAL ?? 0;
   </div>
 </div>
 <script>
-var _estadoCells = {};
-document.querySelectorAll('#ct-presup .presup-estado').forEach(function(td) {
-  if (td.dataset.codigo) _estadoCells[td.dataset.codigo] = td;
-});
-
 window.initCrmTable && window.initCrmTable('ct-presup');
-
-(function() {
-  var codigos = Object.keys(_estadoCells);
-  if (!codigos.length) return;
-  var base = '{{ rtrim(url("/"), "/") }}';
-  $.get(base + '/presupuestos/estados/batch', { codigos: codigos.join(',') }, function(data) {
-    Object.keys(data).forEach(function(cod) {
-      if (_estadoCells[cod]) _estadoCells[cod].innerHTML = data[cod];
-    });
-  });
-})();
 </script>
 
 @endif
