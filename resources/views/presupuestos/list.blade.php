@@ -38,7 +38,7 @@ $totalIva += $row->IMP_C_IVA ?? $row->TOTAL ?? 0;
         <col style="width:88px">
         @if(!$hideCliente)
         <col style="width:160px">@endif
-        <col>{{-- Título: ocupa el resto --}}
+        <col style="width:180px">{{-- Título --}}
         <col style="width:120px">
         <col style="width:90px">
         <col style="width:100px">
@@ -77,8 +77,21 @@ $totalIva += $row->IMP_C_IVA ?? $row->TOTAL ?? 0;
           @endif
           <td class="text-xs text-slate-600" style="word-break:break-word; white-space:normal">{{ $row->TITULO ?? '—' }}
           </td>
-          <td class="presup-estado" data-codigo="{{ $row->CODIGO }}">
-            <span class="text-slate-300 text-xs">·</span>
+          <td>
+            @php
+              $est = $row->DESCRIPCION_ESTADO ?? $row->ESTADO ?? '';
+              $cls = match(true) {
+                str_contains(strtolower($est), 'acept')  => 'badge-green',
+                str_contains(strtolower($est), 'rechaz') => 'badge-red',
+                str_contains(strtolower($est), 'espera') => 'badge-yellow',
+                default => 'badge-gray',
+              };
+            @endphp
+            @if($est)
+              <span class="badge {{ $cls }}">{{ $est }}</span>
+            @else
+              <span class="text-slate-300 text-xs">—</span>
+            @endif
           </td>
           <td class="text-xs text-slate-500 overflow-hidden" style="word-break:break-word">{{ $row->NOMBRE_VENDEDOR ??
             $row->VENDEDOR ?? $row->USUARIO_ALTA ?? '—' }}</td>
@@ -102,25 +115,7 @@ $totalIva += $row->IMP_C_IVA ?? $row->TOTAL ?? 0;
   </div>
 </div>
 <script>
-// Capturar referencias a TODAS las celdas antes de que initCrmTable oculte las filas
-var _estadoCells = {};
-document.querySelectorAll('#ct-presup .presup-estado').forEach(function(td) {
-  if (td.dataset.codigo) _estadoCells[td.dataset.codigo] = td;
-});
-
 window.initCrmTable && window.initCrmTable('ct-presup');
-
-// Una sola llamada batch para todos los presupuestos
-(function() {
-  var codigos = Object.keys(_estadoCells);
-  if (!codigos.length) return;
-  var base = '{{ rtrim(url("/"), "/") }}';
-  $.get(base + '/presupuestos/estados/batch', { codigos: codigos.join(',') }, function(data) {
-    Object.keys(data).forEach(function(cod) {
-      if (_estadoCells[cod]) _estadoCells[cod].innerHTML = data[cod];
-    });
-  });
-})();
 </script>
 
 @endif
