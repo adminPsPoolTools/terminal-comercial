@@ -41,9 +41,11 @@ Route::middleware('auth.comercial')->group(function () {
     Route::get('/agenda/list',  [AgendaController::class, 'list'])->name('agenda.list');
 
     // Clientes
-    Route::get('/clientes',          [ClientesController::class, 'index'])->name('clientes.index');
-    Route::get('/clientes/list',     [ClientesController::class, 'list'])->name('clientes.list');
-    Route::get('/clientes/{codigo}', [ClientesController::class, 'detalle'])->name('clientes.detalle');
+    Route::get('/clientes',           [ClientesController::class, 'index'])->name('clientes.index');
+    Route::get('/clientes/list',      [ClientesController::class, 'list'])->name('clientes.list');
+    Route::get('/clientes/crear',     [ClientesController::class, 'crear'])->name('clientes.crear');
+    Route::post('/clientes',          [ClientesController::class, 'store'])->name('clientes.store');
+    Route::get('/clientes/{codigo}',  [ClientesController::class, 'detalle'])->name('clientes.detalle');
 
     // Artículos
     Route::get('/articulos',      [ArticulosController::class, 'index'])->name('articulos.index');

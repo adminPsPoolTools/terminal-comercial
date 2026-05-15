@@ -266,6 +266,11 @@ class ApiService
         return $this->getItem('obtenerSolicitudPresupuestoPorCodigo', ['codigo' => $codigo, 'visita_comercial' => '']);
     }
 
+    public function crearCliente(array $datos): ?object
+    {
+        return $this->normalizeItem($this->post('crearActualizarCliente', $datos));
+    }
+
     public function obtenerEstadosIncidencia(): array
     {
         return $this->getArray('obtenerSelectEstadoIncidencia');

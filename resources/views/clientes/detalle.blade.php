@@ -5,6 +5,10 @@
 @section('content')
 <div class="space-y-5 max-w-6xl">
 
+  @if(session('success'))
+    <div class="bg-green-50 border border-green-200 rounded-lg px-4 py-3 text-green-700 text-sm">{{ session('success') }}</div>
+  @endif
+
   {{-- Header card --}}
   <div class="crm-card p-6">
     <div class="flex flex-col sm:flex-row sm:items-start gap-4">

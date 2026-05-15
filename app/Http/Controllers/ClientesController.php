@@ -45,6 +45,77 @@ class ClientesController extends Controller
         return view('clientes.list', compact('clientes', 'comercial'));
     }
 
+    public function crear()
+    {
+        $categorias = $this->api->obtenerCategorias();
+        $tipos      = $this->api->obtenerTipos();
+        $provincias = $this->api->obtenerProvincias();
+
+        return view('clientes.crear', compact('categorias', 'tipos', 'provincias'));
+    }
+
+    public function store(Request $request)
+    {
+        $comercial = (int) session('comercial_id');
+
+        $esExt = $request->input('es_extracomunitario', 'N');
+        $impuesto = match($esExt) {
+            'I', 'E' => '99',
+            'N'      => '21',
+            default  => '0',
+        };
+
+        $datos = [
+            'comercial'                       => $comercial,
+            'codigo'                          => 0,
+            'cif'                             => $request->input('cif', ''),
+            'categoria'                       => $request->input('categoria', ''),
+            'tipocliente'                     => $request->input('tipocliente', ''),
+            'descripcion'                     => $request->input('descripcion', ''),
+            'alias'                           => $request->input('alias', ''),
+            'direccion'                       => $request->input('direccion', ''),
+            'apcorreos'                       => $request->input('apcorreos', ''),
+            'cp'                              => $request->input('cp', ''),
+            'poblacion'                       => $request->input('poblacion', ''),
+            'comarca'                         => $request->input('comarca', ''),
+            'provincia'                       => $request->input('provincia', ''),
+            'pais'                            => $request->input('pais', ''),
+            'telefonofijo'                    => $request->input('telefonofijo', ''),
+            'telefonomovil'                   => $request->input('telefonomovil', ''),
+            'fax'                             => $request->input('fax', ''),
+            'correo'                          => $request->input('correo', ''),
+            'web'                             => $request->input('web', ''),
+            'contacto'                        => $request->input('contacto', ''),
+            'comentario_comercial_cliente'    => $request->input('comentario_comercial_cliente', ''),
+            'comentario_alerta_comercial'     => $request->input('comentario_alerta_comercial', ''),
+            'libre10_cliente'                 => $request->input('libre10_cliente', ''),
+            'direccionenviomercancia'         => $request->input('direccionenviomercancia', ''),
+            'cpenviomercancia'                => $request->input('cpenviomercancia', ''),
+            'poblacionenviomercancia'         => $request->input('poblacionenviomercancia', ''),
+            'provinciaenviomercancia'         => $request->input('provinciaenviomercancia', ''),
+            'telefonofijoenviomercancia'      => $request->input('telefonofijoenviomercancia', ''),
+            'telefonomovilenviomercancia'     => $request->input('telefonomovilenviomercancia', ''),
+            'faxenviomercancia'               => $request->input('faxenviomercancia', ''),
+            'correoenviomercancia'            => $request->input('correoenviomercancia', ''),
+            'vendedor'                        => $comercial,
+            'vendedor_asignado'               => $comercial,
+            'usuario_alta'                    => $comercial,
+            'usuario_ultima_modificacion'     => $comercial,
+            'es_extracomunitario'             => $esExt,
+            'impuesto'                        => $impuesto,
+            'temas_interes'                   => '',
+        ];
+
+        $resultado = $this->api->crearCliente($datos);
+
+        if ($resultado && !empty($resultado->codigo)) {
+            return redirect()->route('clientes.detalle', $resultado->codigo)
+                ->with('success', 'Cliente creado correctamente.');
+        }
+
+        return back()->withInput()->with('error', 'Error al crear el cliente. Comprueba los datos e inténtalo de nuevo.');
+    }
+
     public function tabContactos(string $codigo)
     {
         $comercial  = (int) session('comercial_id');

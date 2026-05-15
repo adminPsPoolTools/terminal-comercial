@@ -11,7 +11,7 @@
           @foreach($categorias as $c)<option value="{{ $c->CODIGO }}">{{ $c->DESCRIPCIONCATEGORIA }}</option>@endforeach
         </select></div>
       <button id="btn-buscar" onclick="buscar()" class="btn btn-primary shrink-0 self-end">@include('partials.icon',['name'=>'search']) Buscar</button>
-      <button class="btn btn-secondary shrink-0 self-end">@include('partials.icon',['name'=>'plus']) Nuevo cliente</button>
+      <a href="{{ route('clientes.crear') }}" class="btn btn-secondary shrink-0 self-end">@include('partials.icon',['name'=>'plus']) Nuevo cliente</a>
     </div>
   </div>
   <div id="div-clientes" class="crm-card"><div class="flex items-center justify-center gap-3 py-16 text-slate-400 text-sm"><span class="spinner"></span> Cargando...</div></div>
