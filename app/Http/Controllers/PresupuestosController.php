@@ -44,11 +44,13 @@ class PresupuestosController extends Controller
 
     public function detalle(string $codigo)
     {
-        $cabecera  = $this->api->obtenerDetallePresupuesto($codigo);
-        $lineas    = $this->api->obtenerLineasPresupuesto($codigo);
-        $estadoAct = $this->api->obtenerEstadoActualPresupuesto($codigo);
-        $estados   = $this->api->obtenerEstadosPresupuesto();
-        return view('presupuestos.detalle', compact('cabecera', 'lineas', 'codigo', 'estadoAct', 'estados'));
+        $cabecera      = $this->api->obtenerDetallePresupuesto($codigo);
+        $lineas        = $this->api->obtenerLineasPresupuesto($codigo);
+        $estadoAct     = $this->api->obtenerEstadoActualPresupuesto($codigo);
+        $estados       = $this->api->obtenerEstadosPresupuesto();
+        $estadoActual  = $estadoAct?->ESTADO ?? '';
+        $comentarioAct = $estadoAct?->COMENTARIO_COMERCIAL_PRESU ?? '';
+        return view('presupuestos.detalle', compact('cabecera', 'lineas', 'codigo', 'estados', 'estadoActual', 'comentarioAct'));
     }
 
     public function update(Request $request, string $codigo)

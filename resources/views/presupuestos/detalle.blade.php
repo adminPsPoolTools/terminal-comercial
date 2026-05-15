@@ -140,14 +140,14 @@
           <select name="estado" class="form-select">
             <option value="">— Sin cambio —</option>
             @foreach($estados as $est)
-              @php $selVal = $estadoAct->ESTADO ?? ''; @endphp
-              <option value="{{ $est->CODIGO }}" {{ $selVal == $est->CODIGO ? 'selected' : '' }}>
-                {{ $est->DESCRIPCION ?? $est->DESCRIPCION_ESTADO ?? $est->CODIGO }}
+              @php $estCod = $est->CODIGO ?? $est->ESTADO ?? ''; @endphp
+              <option value="{{ $estCod }}" {{ $estadoActual == $estCod ? 'selected' : '' }}>
+                {{ $est->DESCRIPCION ?? $est->DESCRIPCION_ESTADO ?? $estCod }}
               </option>
             @endforeach
           </select>
-          @if(!empty($estadoAct->ESTADO))
-            <p class="text-xs text-slate-400 mt-1">Estado actual: <strong>{{ $estadoAct->ESTADO }}</strong></p>
+          @if($estadoActual)
+            <p class="text-xs text-slate-400 mt-1">Estado actual: <strong>{{ $estadoActual }}</strong></p>
           @endif
         </div>
         <div class="flex items-end">
@@ -156,7 +156,7 @@
       </div>
       <div>
         <label class="form-label">Comentario comercial</label>
-        <textarea name="comentario" rows="4" class="form-input" placeholder="Comentario sobre el presupuesto...">{{ old('comentario', $estadoAct->COMENTARIO_COMERCIAL_PRESU ?? '') }}</textarea>
+        <textarea name="comentario" rows="4" class="form-input" placeholder="Comentario sobre el presupuesto...">{{ old('comentario', $comentarioAct) }}</textarea>
       </div>
     </form>
   </div>
