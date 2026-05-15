@@ -5,6 +5,13 @@
 @section('content')
 <div class="space-y-4 max-w-5xl">
 
+  @if(session('success'))
+    <div class="bg-green-50 border border-green-200 rounded-lg px-4 py-3 text-green-700 text-sm font-medium">{{ session('success') }}</div>
+  @endif
+  @if(session('error'))
+    <div class="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-red-700 text-sm font-medium">{{ session('error') }}</div>
+  @endif
+
   {{-- Header --}}
   <div class="crm-card p-4 flex items-start gap-4">
     <div class="flex-1 min-w-0">
@@ -120,6 +127,38 @@
       </table>
     </div>
     @endif
+  </div>
+
+  {{-- Actualizar estado y comentario --}}
+  <div class="crm-card p-5">
+    <h3 class="font-head font-semibold text-xs text-slate-400 uppercase tracking-wide mb-4 pb-2 border-b border-slate-100">Actualizar presupuesto</h3>
+    <form method="POST" action="{{ route('presupuestos.update', $codigo) }}" class="space-y-4">
+      @csrf
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="form-label">Estado</label>
+          <select name="estado" class="form-select">
+            <option value="">— Sin cambio —</option>
+            @foreach($estados as $est)
+              @php $selVal = $estadoAct->ESTADO ?? ''; @endphp
+              <option value="{{ $est->CODIGO }}" {{ $selVal == $est->CODIGO ? 'selected' : '' }}>
+                {{ $est->DESCRIPCION ?? $est->DESCRIPCION_ESTADO ?? $est->CODIGO }}
+              </option>
+            @endforeach
+          </select>
+          @if(!empty($estadoAct->ESTADO))
+            <p class="text-xs text-slate-400 mt-1">Estado actual: <strong>{{ $estadoAct->ESTADO }}</strong></p>
+          @endif
+        </div>
+        <div class="flex items-end">
+          <button type="submit" class="btn btn-primary w-full sm:w-auto">Guardar cambios</button>
+        </div>
+      </div>
+      <div>
+        <label class="form-label">Comentario comercial</label>
+        <textarea name="comentario" rows="4" class="form-input" placeholder="Comentario sobre el presupuesto...">{{ old('comentario', $estadoAct->COMENTARIO_COMERCIAL_PRESU ?? '') }}</textarea>
+      </div>
+    </form>
   </div>
 
 </div>

@@ -271,6 +271,21 @@ class ApiService
         return $this->normalizeItem($this->post('crearActualizarCliente', $datos));
     }
 
+    public function obtenerEstadoActualPresupuesto(string $codigo): ?object
+    {
+        return $this->getItem('cargarDetalleEstadoPresupuesto', ['codigo' => $codigo]);
+    }
+
+    public function actualizarPresupuesto(string $codigo, string $estado, string $comentario): bool
+    {
+        $result = $this->post('actualizarEstadoPresupuesto', [
+            'presupuesto' => $codigo,
+            'estado'      => $estado,
+            'comentario'  => $comentario,
+        ]);
+        return $result !== null;
+    }
+
     public function obtenerEstadosIncidencia(): array
     {
         return $this->getArray('obtenerSelectEstadoIncidencia');

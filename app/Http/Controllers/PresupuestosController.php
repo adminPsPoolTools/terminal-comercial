@@ -44,9 +44,27 @@ class PresupuestosController extends Controller
 
     public function detalle(string $codigo)
     {
-        $cabecera = $this->api->obtenerDetallePresupuesto($codigo);
-        $lineas   = $this->api->obtenerLineasPresupuesto($codigo);
-        return view('presupuestos.detalle', compact('cabecera', 'lineas', 'codigo'));
+        $cabecera  = $this->api->obtenerDetallePresupuesto($codigo);
+        $lineas    = $this->api->obtenerLineasPresupuesto($codigo);
+        $estadoAct = $this->api->obtenerEstadoActualPresupuesto($codigo);
+        $estados   = $this->api->obtenerEstadosPresupuesto();
+        return view('presupuestos.detalle', compact('cabecera', 'lineas', 'codigo', 'estadoAct', 'estados'));
+    }
+
+    public function update(Request $request, string $codigo)
+    {
+        $ok = $this->api->actualizarPresupuesto(
+            $codigo,
+            $request->input('estado', ''),
+            $request->input('comentario', '')
+        );
+
+        if ($ok) {
+            return redirect()->route('presupuestos.detalle', $codigo)
+                ->with('success', 'Presupuesto actualizado correctamente.');
+        }
+
+        return back()->withInput()->with('error', 'Error al actualizar el presupuesto.');
     }
 
     public function poblaciones(Request $request)
