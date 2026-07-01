@@ -17,12 +17,19 @@ class PedidosController extends Controller
         return view('pedidos.index', compact('comercial', 'estados'));
     }
 
+    public function detalle(string $codigo)
+    {
+        $cabecera = $this->api->obtenerDetallePedido($codigo);
+        $lineas   = $this->api->obtenerLineasPedido($codigo);
+        return view('pedidos.detalle', compact('cabecera', 'lineas', 'codigo'));
+    }
+
     public function list(Request $request)
     {
         $comercial = session('comercial_id');
 
         $filtros = [
-            'cliente'         => '',
+            'cliente'         => $request->input('cliente', ''),
             'fecha_desde'     => $request->input('fecha_desde', date('01/01/Y')),
             'titulo'          => $request->input('titulo', ''),
             'estado'          => $request->input('estado', ''),
@@ -30,7 +37,8 @@ class PedidosController extends Controller
             'estado_servido'  => $request->input('estado_servido', ''),
         ];
 
-        $pedidos = $this->api->buscarPedidos($filtros);
-        return view('pedidos.list', compact('pedidos', 'comercial'));
+        $pedidos     = $this->api->buscarPedidos($filtros);
+        $hideCliente = !empty($filtros['cliente']);
+        return view('pedidos.list', compact('pedidos', 'comercial', 'hideCliente'));
     }
 }

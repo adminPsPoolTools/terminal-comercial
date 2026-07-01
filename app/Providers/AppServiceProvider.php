@@ -11,7 +11,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Registrar ApiService como singleton para reutilizar la instancia
-        $this->app->singleton(ApiService::class, function ($app) {
+        $this->app->singleton(ApiService::class, function () {
             return new ApiService();
         });
     }

@@ -12,9 +12,9 @@
         <tr>
           <td class="font-mono text-xs">{{ $row->CODIGO }}</td>
           <td class="text-xs">{{ $row->FECHA ?? '—' }}</td>
-          <td class="text-xs text-slate-500">{{ $row->DESCRIPCION_TIPO ?? '—' }}</td>
+          <td class="text-xs text-slate-500">{{ $row->GASTO ?? '—' }}</td>
           <td class="max-w-xs truncate text-sm">{{ $row->COMENTARIO ?? '—' }}</td>
-          <td class="text-xs">{{ $row->DESCRIPCION_MEDIO ?? '—' }}</td>
+          <td class="text-xs">{{ $row->MEDIOCOBRO ?? '—' }}</td>
           <td><span class="badge {{ ($row->PAGADO??'N')==='S' ? 'badge-green' : 'badge-yellow' }}">{{ ($row->PAGADO??'N')==='S' ? 'Sí' : 'No' }}</span></td>
           <td class="td-right font-mono text-sm font-semibold">{{ number_format($row->IMPORTE ?? 0, 2, ',', '.') }}€</td>
         </tr>

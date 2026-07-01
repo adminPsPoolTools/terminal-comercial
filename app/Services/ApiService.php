@@ -93,12 +93,12 @@ class ApiService
 
     public function obtenerPresupuestos(array $filtros): array
     {
-        return $this->getArray('buscarPresupuestos', $filtros);
+        return $this->getArray('obtenerPresupuestosFichaCliente', $filtros);
     }
 
     public function obtenerEstadosPresupuesto(): array
     {
-        return $this->getArray('obtenerEstadosPresupuesto');
+        return $this->getArray('obtenerSelectEstadosPresupuesto');
     }
 
     public function buscarExpedientes(array $filtros): array
@@ -123,32 +123,32 @@ class ApiService
 
     public function buscarPedidos(array $filtros): array
     {
-        return $this->getArray('buscarPedidos', $filtros);
+        return $this->getArray('obtenerPedidosFichaCliente', $filtros);
     }
 
     public function obtenerEstadosPedido(): array
     {
-        return $this->getArray('obtenerEstadosPedido');
+        return $this->getArray('obtenerSelectEstadosPedido');
     }
 
     public function buscarClientes(array $filtros): array
     {
-        return $this->getArray('buscarClientes', $filtros);
+        return $this->getArray('obtenerListadoClientes', $filtros);
     }
 
     public function obtenerCliente(string $codigo): ?object
     {
-        return $this->getItem('obtenerCliente', ['codigo' => $codigo]);
+        return $this->getItem('obtenerDetalleFichaCliente', ['cliente' => $codigo]);
     }
 
     public function obtenerCategorias(): array
     {
-        return $this->getArray('obtenerCategorias');
+        return $this->getArray('obtenerCategoriasCliente');
     }
 
     public function obtenerTipos(): array
     {
-        return $this->getArray('obtenerTipos');
+        return $this->getArray('obtenerTiposCliente');
     }
 
     public function buscarArticulos(array $filtros): array
@@ -158,7 +158,199 @@ class ApiService
 
     public function buscarIncidenciasSat(array $filtros): array
     {
-        return $this->getArray('buscarIncidenciasSat', $filtros);
+        return $this->getArray('buscarIncidencias', $filtros);
+    }
+
+    public function obtenerContactosCliente(string $codigo, int $comercial): array
+    {
+        return $this->getArray('obtenerContactosFichaCliente', ['cliente' => $codigo, 'comercial' => $comercial]);
+    }
+
+    public function obtenerDireccionesCliente(string $codigo): array
+    {
+        return $this->getArray('obtenerDireccionesCliente', ['cliente' => $codigo]);
+    }
+
+    public function obtenerVisitasCliente(string $codigo, int $comercial): array
+    {
+        return $this->getArray('obtenerVisitasFichaCliente', ['cliente' => $codigo, 'comercial' => $comercial]);
+    }
+
+    public function obtenerIncidenciasCliente(string $codigo): array
+    {
+        return $this->getArray('obtenerIncidenciasPorCliente', ['cliente' => $codigo]);
+    }
+
+    public function obtenerSolicitudesPresupuestoCliente(string $codigo, string $filtro = ''): array
+    {
+        return $this->getArray('obtenerSolicitudesPresupuestosFichaCliente', ['cliente' => $codigo, 'filtro' => $filtro]);
+    }
+
+    public function obtenerVentasSgfa(string $fechaDesde, string $codigo): array
+    {
+        return $this->getArray('obtenerVentasSgfa', ['fecha_desde' => $fechaDesde, 'cliente' => $codigo, 'proyecto' => 1]);
+    }
+
+    public function obtenerArticulosVendidos(string $fechaDesde, string $codigo): array
+    {
+        return $this->getArray('obtenerArticulosVendidos', ['fecha_desde' => $fechaDesde, 'cliente' => $codigo, 'proyecto' => 1]);
+    }
+
+    public function obtenerLlamadasCliente(string $codigo): array
+    {
+        return $this->getArray('obtenerLlamadasFichaClientes', ['cliente' => $codigo]);
+    }
+
+    public function obtenerAlbaranesCliente(string $fechaDesde, int $comercial, string $codigo): array
+    {
+        return $this->getArray('obtenerAlbaranesFichaClientes', [
+            'fecha_desde' => $fechaDesde,
+            'comercial'   => $comercial,
+            'cliente'     => $codigo,
+            'titulo'      => '',
+        ]);
+    }
+
+    public function obtenerHorariosCliente(string $codigo): array
+    {
+        return $this->getArray('obtenerHorariosCliente', ['cliente' => $codigo]);
+    }
+
+    public function obtenerDetallePresupuesto(string $codigo): ?object
+    {
+        return $this->getItem('obtenerInformacionPresupuesto', ['presupuesto' => $codigo]);
+    }
+
+    public function obtenerLineasPresupuesto(string $codigo): array
+    {
+        return $this->getArray('obtenerArticulosPresupuesto', ['presupuesto' => $codigo]);
+    }
+
+    public function obtenerDetallePedido(string $codigo): ?object
+    {
+        return $this->getItem('obtenerInformacionInformePedido', ['proyecto' => config('crm.proyecto', 1), 'pedido' => $codigo]);
+    }
+
+    public function obtenerLineasPedido(string $codigo): array
+    {
+        return $this->getArray('obtenerLineasPedidoInforme', ['proyecto' => config('crm.proyecto', 1), 'pedido' => $codigo]);
+    }
+
+    public function obtenerDetalleAlbaran(string $codigo): ?object
+    {
+        return $this->getItem('obtenerInformacionAlbaran', ['proyecto' => config('crm.proyecto', 1), 'albaran' => $codigo]);
+    }
+
+    public function obtenerLineasAlbaran(string $codigo): array
+    {
+        return $this->getArray('obtenerArticulosAlbaran', ['albaran' => $codigo]);
+    }
+
+    public function obtenerMotivosVisitas(): array
+    {
+        return $this->getArray('obtenerMotivosVisitas');
+    }
+
+    public function obtenerListaAccionesVisitas(): array
+    {
+        return $this->getArray('obtenerAccionesVisitas');
+    }
+
+    public function obtenerListaAsuntosVisitas(): array
+    {
+        return $this->getArray('obtenerAsuntosAccionesVisitas');
+    }
+
+    public function obtenerNuevoCodigoVisita(): ?object
+    {
+        return $this->getItem('obtenerNuevoCodigoVisita');
+    }
+
+    public function crearVisitaComercial(array $datos): ?object
+    {
+        return $this->normalizeItem($this->post('crearVisitaComercial', $datos));
+    }
+
+    public function asignarAccionesVisita(string $codigo, string $acciones): bool
+    {
+        $result = $this->post('asignarAccionesVisita', ['codigo' => $codigo, 'acciones' => $acciones]);
+        return $result !== null;
+    }
+
+    public function asignarAsuntosVisita(string $codigo, string $asuntos): bool
+    {
+        $result = $this->post('asignarAsuntosVisita', ['codigo' => $codigo, 'asuntos' => $asuntos]);
+        return $result !== null;
+    }
+
+    public function obtenerDetalleVisita(string $codigo): ?object
+    {
+        return $this->getItem('obtenerDetalleVisita', ['codigo' => $codigo]);
+    }
+
+    public function obtenerAccionesVisita(string $codigo): array
+    {
+        return $this->getArray('obtenerAccionesVisitaPorCodigo', ['codigo' => $codigo]);
+    }
+
+    public function obtenerAsuntosVisita(string $codigo): array
+    {
+        return $this->getArray('obtenerAsuntosVisitaPorCodigo', ['codigo' => $codigo]);
+    }
+
+    public function obtenerSiguienteCodigoSolicitud(): ?object
+    {
+        return $this->getItem('obtenerSiguienteCodigoSolicitudPresupuesto');
+    }
+
+    public function obtenerProyectosSolicitud(): array
+    {
+        return $this->getArray('obtenerOpcionesProyectoSolicitudPresupuesto');
+    }
+
+    public function obtenerCaracteresSolicitud(): array
+    {
+        return $this->getArray('obtenerOpcionesCaracterSolicitudPresupuesto');
+    }
+
+    public function obtenerCategoriasSolicitud(): array
+    {
+        return $this->getArray('obtenerOpcionesCategoriaSolicitudPresupuesto');
+    }
+
+    public function obtenerCorreosCliente(string $cliente): array
+    {
+        return $this->getArray('obtenerCorreosRelacionadosCliente', ['cliente' => $cliente]);
+    }
+
+    public function crearSolicitudPresupuesto(array $datos): ?object
+    {
+        return $this->normalizeItem($this->post('crearSolicitudPresupuesto', $datos));
+    }
+
+    public function obtenerDetalleSolicitud(string $codigo): ?object
+    {
+        return $this->getItem('obtenerSolicitudPresupuestoPorCodigo', ['codigo' => $codigo, 'visita_comercial' => '']);
+    }
+
+    public function crearCliente(array $datos): ?object
+    {
+        return $this->normalizeItem($this->post('crearActualizarCliente', $datos));
+    }
+
+    public function obtenerEstadoActualPresupuesto(string $codigo): ?object
+    {
+        return $this->getItem('cargarDetalleEstadoPresupuesto', ['codigo' => $codigo]);
+    }
+
+    public function actualizarPresupuesto(string $codigo, string $estado, string $comentario): bool
+    {
+        $result = $this->post('actualizarEstadoPresupuesto', [
+            'presupuesto' => $codigo,
+            'estado'      => $estado,
+            'comentario'  => $comentario,
+        ]);
+        return $result !== null;
     }
 
     public function obtenerEstadosIncidencia(): array

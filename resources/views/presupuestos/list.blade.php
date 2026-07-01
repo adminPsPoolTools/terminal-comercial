@@ -1,68 +1,106 @@
-@php $total = 0; $totalIva = 0; @endphp
+@php
+$total = 0;
+$totalIva = 0;
+$hideCliente = $hideCliente ?? false;
+foreach($presupuestos as $row) {
+if(!is_null($row->CODIGO ?? null)) {
+$total += $row->BASE_IMP ?? $row->BASEIMPONIBLE ?? 0;
+$totalIva += $row->IMP_C_IVA ?? $row->TOTAL ?? 0;
+}
+}
+@endphp
 
 @if(empty($presupuestos))
-  <div class="empty-state">Sin presupuestos para los filtros seleccionados.</div>
+<div class="empty-state">Sin presupuestos para los filtros seleccionados.</div>
 @else
-  <div class="table-wrapper rounded-xl overflow-hidden">
-    <table class="crm-table">
+
+<div id="ct-presup">
+  <div class="flex flex-wrap items-center gap-3 px-4 py-3 border-b border-slate-100 bg-white">
+    <div class="relative">
+      <svg class="absolute left-2.5 top-2 w-4 h-4 text-slate-400 pointer-events-none" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.35-4.35" />
+      </svg>
+      <input type="text" class="tab-search form-input pl-8 py-1.5 text-xs w-52" placeholder="Buscar en presupuestos...">
+    </div>
+    <span class="tab-count text-xs text-slate-400"></span>
+    <div class="ml-auto flex items-center gap-2">
+      <button class="btn-tab-prev btn btn-sm btn-secondary" disabled>‹ Ant.</button>
+      <span class="tab-page-info text-xs text-slate-500 w-14 text-center font-medium"></span>
+      <button class="btn-tab-next btn btn-sm btn-secondary">Sig. ›</button>
+    </div>
+  </div>
+  <div class="table-wrapper" style="overflow-x:auto; -webkit-overflow-scrolling:touch">
+    <table class="crm-table" style="min-width:640px">
       <thead>
         <tr>
-          <th>Código</th>
-          <th>Fecha</th>
-          <th>Cliente</th>
-          <th>Título</th>
-          <th>Estado</th>
-          <th>Comercial</th>
-          <th class="td-right">Base Imp.</th>
-          <th class="td-right">C/IVA</th>
+          <th class="srt whitespace-nowrap" style="min-width:80px">Código <span class="sa text-slate-300">↕</span></th>
+          <th class="srt whitespace-nowrap" style="min-width:85px">Fecha <span class="sa text-slate-300">↕</span></th>
+          @if(!$hideCliente)
+          <th class="srt" style="min-width:140px">Cliente <span class="sa text-slate-300">↕</span></th>
+          @endif
+          <th class="srt" style="min-width:160px; max-width:260px">Título <span class="sa text-slate-300">↕</span></th>
+          <th class="srt whitespace-nowrap" style="min-width:100px">Estado <span class="sa text-slate-300">↕</span></th>
+          <th class="srt" style="min-width:80px">Comercial <span class="sa text-slate-300">↕</span></th>
+          <th class="srt td-right whitespace-nowrap" style="min-width:90px">Base Imp. <span class="sa text-slate-300">↕</span></th>
+          <th class="srt td-right whitespace-nowrap" style="min-width:90px">C/IVA <span class="sa text-slate-300">↕</span></th>
         </tr>
       </thead>
       <tbody>
         @foreach($presupuestos as $row)
-          @if(!is_null($row->CODIGO ?? null))
-          @php
-            $total    += $row->BASE_IMP ?? 0;
-            $totalIva += $row->IMP_C_IVA ?? 0;
-          @endphp
-          <tr>
-            <td class="font-mono text-xs">
-              <a href="/presupuestos/{{ $row->CODIGO }}" class="text-blue-600 hover:underline font-semibold">
-                {{ $row->CODIGO }}
-              </a>
-            </td>
-            <td class="text-xs">{{ $row->FECHA ?? '—' }}</td>
-            <td class="max-w-xs">
-              <a href="/clientes/{{ $row->CLIENTE ?? '' }}" class="text-blue-600 hover:underline text-xs">
-                {{ $row->DESCRIPCION_CLIENTE ?? $row->CLIENTE ?? '—' }}
-              </a>
-            </td>
-            <td class="text-xs text-slate-600 max-w-xs truncate">{{ $row->TITULO ?? '—' }}</td>
-            <td>
-              @php
-                $est = $row->DESCRIPCION_ESTADO ?? $row->ESTADO ?? '';
-                $cls = match(true) {
-                  str_contains(strtolower($est), 'acept') => 'badge-green',
-                  str_contains(strtolower($est), 'rechaz') => 'badge-red',
-                  str_contains(strtolower($est), 'espera') => 'badge-yellow',
-                  default => 'badge-gray',
-                };
-              @endphp
-              <span class="badge {{ $cls }}">{{ $est ?: '—' }}</span>
-            </td>
-            <td class="text-xs text-slate-500">{{ $row->NOMBRE_VENDEDOR ?? $row->VENDEDOR ?? '—' }}</td>
-            <td class="td-right font-mono text-sm">{{ number_format($row->BASE_IMP ?? 0, 2, ',', '.') }}€</td>
-            <td class="td-right font-mono text-sm font-semibold">{{ number_format($row->IMP_C_IVA ?? 0, 2, ',', '.') }}€</td>
-          </tr>
+        @if(!is_null($row->CODIGO ?? null))
+        <tr>
+          <td class="font-mono text-xs font-semibold whitespace-nowrap">
+            <a href="{{ route('presupuestos.detalle', $row->CODIGO) }}" class="text-blue-600 hover:underline">
+              {{ $row->CODIGO }}
+            </a>
+          </td>
+          <td class="text-xs whitespace-nowrap">{{ $row->FECHA ?? '—' }}</td>
+          @if(!$hideCliente)
+          <td class="text-xs" style="white-space:normal; word-break:break-word; max-width:160px">
+            <a href="{{ route('clientes.detalle', $row->CLIENTE ?? 0) }}" class="text-blue-600 hover:underline">
+              {{ $row->DESCRIPCION_CLIENTE ?? $row->CLIENTE ?? '—' }}
+            </a>
+          </td>
           @endif
+          <td class="text-xs text-slate-600" style="white-space:normal; word-break:break-word; max-width:260px">{{ $row->TITULO ?? '—' }}</td>
+          <td class="whitespace-nowrap">
+            @php
+              $est = $row->DESCRIPCION_ESTADO ?? $row->ESTADO ?? '';
+              $cls = match(true) {
+                str_contains(strtolower($est), 'acept')  => 'badge-green',
+                str_contains(strtolower($est), 'rechaz') => 'badge-red',
+                str_contains(strtolower($est), 'espera') => 'badge-yellow',
+                default => 'badge-gray',
+              };
+            @endphp
+            @if($est)
+              <span class="badge {{ $cls }}">{{ $est }}</span>
+            @else
+              <span class="text-slate-300 text-xs">—</span>
+            @endif
+          </td>
+          <td class="text-xs text-slate-500" style="white-space:normal; word-break:break-word; max-width:100px">{{ $row->NOMBRE_VENDEDOR ?? $row->VENDEDOR ?? $row->USUARIO_ALTA ?? '—' }}</td>
+          <td class="td-right font-mono text-sm whitespace-nowrap">{{ number_format((float)($row->BASE_IMP ?? $row->BASEIMPONIBLE ?? 0), 2, ',', '.') }}€</td>
+          <td class="td-right font-mono text-sm font-semibold whitespace-nowrap">{{ number_format((float)($row->IMP_C_IVA ?? $row->TOTAL ?? 0), 2, ',', '.') }}€</td>
+        </tr>
+        @endif
         @endforeach
       </tbody>
       <tfoot>
         <tr class="total-row">
-          <td colspan="6" class="text-right font-semibold text-slate-600 text-xs uppercase tracking-wide pr-4">Total</td>
+          <td colspan="{{ $hideCliente ? 5 : 6 }}"
+            class="text-right font-semibold text-slate-600 text-xs uppercase tracking-wide pr-4">Total general</td>
           <td class="td-right font-mono font-bold">{{ number_format($total, 2, ',', '.') }}€</td>
           <td class="td-right font-mono font-bold">{{ number_format($totalIva, 2, ',', '.') }}€</td>
         </tr>
       </tfoot>
     </table>
   </div>
+</div>
+<script>
+window.initCrmTable && window.initCrmTable('ct-presup');
+</script>
+
 @endif

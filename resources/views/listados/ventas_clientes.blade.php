@@ -18,7 +18,7 @@
         @php $totalGen += $row->TOTAL ?? 0; @endphp
         <tr>
           <td class="font-medium text-sm">
-            <a href="/clientes/{{ $row->CLIENTE }}" class="text-blue-600 hover:underline">{{ $row->DESCRIPCION ?? $row->CLIENTE }}</a>
+            <a href="{{ route('clientes.detalle', $row->CLIENTE) }}" class="text-blue-600 hover:underline">{{ $row->DESCRIPCION ?? $row->CLIENTE }}</a>
           </td>
           <td class="text-xs text-slate-500">{{ $row->PROVINCIA ?? '—' }}</td>
           @if(isset($row->MES_1))

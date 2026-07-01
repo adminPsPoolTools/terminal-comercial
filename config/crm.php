@@ -112,4 +112,6 @@ return [
     */
     'admin_comerciales' => [18, 9, 31],
 
+    'proyecto' => (int) env('CRM_PROYECTO', 1),
+
 ];

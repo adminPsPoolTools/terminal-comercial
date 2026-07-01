@@ -23,7 +23,7 @@ class PresupuestosController extends Controller
         $comercial = session('comercial_id');
 
         $filtros = [
-            'cliente'       => '',
+            'cliente'       => $request->input('cliente', ''),
             'fecha_desde'   => $request->input('fecha_desde', date('01/01/Y')),
             'titulo'        => $request->input('titulo', ''),
             'estado'        => $request->input('estado', ''),
@@ -38,7 +38,72 @@ class PresupuestosController extends Controller
         ];
 
         $presupuestos = $this->api->obtenerPresupuestos($filtros);
-        return view('presupuestos.list', compact('presupuestos', 'comercial'));
+        $hideCliente  = !empty($filtros['cliente']);
+
+        return view('presupuestos.list', compact('presupuestos', 'comercial', 'hideCliente'));
+    }
+
+    public function detalle(string $codigo)
+    {
+        $cabecera      = $this->api->obtenerDetallePresupuesto($codigo);
+        $lineas        = $this->api->obtenerLineasPresupuesto($codigo);
+        $estadoAct     = $this->api->obtenerEstadoActualPresupuesto($codigo);
+        $estados       = $this->api->obtenerEstadosPresupuesto();
+        $estadoActual  = $estadoAct?->ESTADO ?? '';
+        $comentarioAct = $estadoAct?->COMENTARIO_COMERCIAL_PRESU ?? '';
+        return view('presupuestos.detalle', compact('cabecera', 'lineas', 'codigo', 'estados', 'estadoActual', 'comentarioAct'));
+    }
+
+    public function estadosBatch(Request $request)
+    {
+        $codigos = array_filter(explode(',', $request->input('codigos', '')));
+        $result  = [];
+        foreach ($codigos as $cod) {
+            $cod = trim($cod);
+            if ($cod === '') continue;
+            $obj    = $this->api->obtenerEstadoActualPresupuesto($cod);
+            $estado = $obj?->ESTADO ?? '';
+            $cls    = match(true) {
+                str_contains(strtolower($estado), 'acept')  => 'badge-green',
+                str_contains(strtolower($estado), 'rechaz') => 'badge-red',
+                str_contains(strtolower($estado), 'espera') => 'badge-yellow',
+                default => 'badge-gray',
+            };
+            $result[$cod] = $estado
+                ? "<span class=\"badge {$cls}\">{$estado}</span>"
+                : '<span class="text-slate-300 text-xs">—</span>';
+        }
+        return response()->json($result);
+    }
+
+    public function estado(string $codigo)
+    {
+        $obj    = $this->api->obtenerEstadoActualPresupuesto($codigo);
+        $estado = $obj?->ESTADO ?? '';
+        $cls    = match(true) {
+            str_contains(strtolower($estado), 'acept')  => 'badge-green',
+            str_contains(strtolower($estado), 'rechaz') => 'badge-red',
+            str_contains(strtolower($estado), 'espera') => 'badge-yellow',
+            default => 'badge-gray',
+        };
+        $badge = $estado ? "<span class=\"badge {$cls}\">{$estado}</span>" : '<span class="text-slate-300 text-xs">—</span>';
+        return response($badge)->header('Content-Type', 'text/html');
+    }
+
+    public function update(Request $request, string $codigo)
+    {
+        $ok = $this->api->actualizarPresupuesto(
+            $codigo,
+            $request->input('estado', ''),
+            $request->input('comentario', '')
+        );
+
+        if ($ok) {
+            return redirect()->route('presupuestos.detalle', $codigo)
+                ->with('success', 'Presupuesto actualizado correctamente.');
+        }
+
+        return back()->withInput()->with('error', 'Error al actualizar el presupuesto.');
     }
 
     public function poblaciones(Request $request)
