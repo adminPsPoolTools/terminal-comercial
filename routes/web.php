@@ -76,5 +76,6 @@ Route::middleware('auth.comercial')->group(function () {
     Route::get('/incidencias/list', [IncidenciasController::class, 'list'])->name('incidencias.list');
 
     // RRHH
-    Route::get('/rrhh', [RrhhController::class, 'index'])->name('rrhh.index');
+    Route::get('/rrhh',        [RrhhController::class, 'index'])->name('rrhh.index');
+    Route::get('/rrhh/inicio', [RrhhController::class, 'inicio'])->name('rrhh.inicio');
 });

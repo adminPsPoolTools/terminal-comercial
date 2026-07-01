@@ -201,6 +201,13 @@ class ApiService
         return $this->request('GET', $this->makeRhUrl($path), $params, "ApiService::getRH [{$path}]");
     }
 
+    public function getRHRaw(string $path, array $params = []): ?string
+    {
+        $result = $this->performRequest('GET', $this->makeRhUrl($path), $params, true, "ApiService::getRHRaw [{$path}]");
+
+        return $result['ok'] ? $result['body'] : null;
+    }
+
     public function probeEndpoint(string $endpoint, array $params = [], bool $rh = false, string $method = 'GET'): array
     {
         $url = $rh ? $this->makeRhUrl($endpoint) : $this->makeApiUrl($endpoint);

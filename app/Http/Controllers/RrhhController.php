@@ -20,4 +20,19 @@ class RrhhController extends Controller
 
         return view('rrhh.index', compact('usuario', 'nombre'));
     }
+
+    public function inicio()
+    {
+        if (! session()->has('rrhh_id')) {
+            abort(403);
+        }
+
+        $html = $this->api->getRHRaw('inicio', ['usuario' => session('rrhh_id')]);
+
+        if ($html === null) {
+            return response('<div class="empty-state">No se pudo cargar el módulo de RRHH.</div>', 502);
+        }
+
+        return response($html);
+    }
 }

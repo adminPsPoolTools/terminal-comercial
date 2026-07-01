@@ -47,7 +47,7 @@
 @push('scripts')
 <script>
 $(function(){
-  $.get('{{ config("crm.ws_rh") }}/inicio?usuario={{ $usuario }}', function(html){
+  $.get('{{ route("rrhh.inicio") }}', function(html){
     $('#div-rrhh').html(html);
   }).fail(function(){
     $('#div-rrhh').html('<div class="empty-state">No se pudo cargar el módulo de RRHH.</div>');
