@@ -99,11 +99,8 @@ Route::middleware('auth.comercial')->group(function () {
     Route::get('/incidencias/list', [IncidenciasController::class, 'list'])->name('incidencias.list');
 
     // RRHH
-<<<<<<< HEAD
     Route::get('/rrhh',        [RrhhController::class, 'index'])->name('rrhh.index');
     Route::get('/rrhh/inicio', [RrhhController::class, 'inicio'])->name('rrhh.inicio');
-=======
-    Route::get('/rrhh', [RrhhController::class, 'index'])->name('rrhh.index');
 
     // Cliente — tabs AJAX
     Route::get('/clientes/{codigo}/contactos',            [ClientesController::class, 'tabContactos'])->name('clientes.tab.contactos');
@@ -116,5 +113,4 @@ Route::middleware('auth.comercial')->group(function () {
     Route::get('/clientes/{codigo}/llamadas',             [ClientesController::class, 'tabLlamadas'])->name('clientes.tab.llamadas');
     Route::get('/clientes/{codigo}/albaranes',            [ClientesController::class, 'tabAlbaranes'])->name('clientes.tab.albaranes');
     Route::get('/clientes/{codigo}/horarios',             [ClientesController::class, 'tabHorarios'])->name('clientes.tab.horarios');
->>>>>>> 9dbe9fbbe2229b2128abbed50286274744b55cab
 });
