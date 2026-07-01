@@ -118,12 +118,46 @@ class ClientesController extends Controller
 
     public function editar(string $codigo)
     {
+        $comercial  = (int) session('comercial_id');
         $cliente    = $this->api->obtenerCliente($codigo);
         $categorias = $this->api->obtenerCategorias();
         $tipos      = $this->api->obtenerTipos();
         $provincias = $this->api->obtenerProvincias();
+        $contactos  = $this->api->obtenerContactosCliente($codigo, $comercial);
 
-        return view('clientes.editar', compact('cliente', 'codigo', 'categorias', 'tipos', 'provincias'));
+        // El detalle de cliente solo trae la descripción de categoría/tipo, no el código;
+        // lo recuperamos buscando la descripción correspondiente en los listados.
+        $categoriaCodigo = $this->buscarCodigoPorDescripcion($categorias, 'DESCRIPCIONCATEGORIA', $cliente->DESCRIPCIONCATEGORIA ?? '');
+        $tipoCodigo      = $this->buscarCodigoPorDescripcion($tipos, 'DESCRIPCION', $cliente->DESCRIPCIONTIPO ?? '');
+
+        $contactoDefecto = null;
+        foreach ($contactos as $contacto) {
+            if (($contacto->CONTACTO_POR_DEFECTO ?? '') === 'S') {
+                $contactoDefecto = $contacto;
+                break;
+            }
+        }
+        $contactoNombre = $contactoDefecto->NOMBRE ?? ($contactos[0]->NOMBRE ?? '');
+
+        return view('clientes.editar', compact(
+            'cliente', 'codigo', 'categorias', 'tipos', 'provincias',
+            'categoriaCodigo', 'tipoCodigo', 'contactoNombre'
+        ));
+    }
+
+    protected function buscarCodigoPorDescripcion(array $lista, string $campoDescripcion, string $descripcion): string
+    {
+        if ($descripcion === '') {
+            return '';
+        }
+
+        foreach ($lista as $item) {
+            if (mb_strtolower(trim($item->{$campoDescripcion} ?? '')) === mb_strtolower(trim($descripcion))) {
+                return (string) $item->CODIGO;
+            }
+        }
+
+        return '';
     }
 
     public function update(string $codigo, Request $request)

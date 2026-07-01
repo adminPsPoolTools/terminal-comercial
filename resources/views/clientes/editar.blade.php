@@ -44,7 +44,7 @@
           <select name="categoria" class="form-select">
             <option value="">— Seleccionar —</option>
             @foreach($categorias as $c)
-              <option value="{{ $c->CODIGO }}" {{ old('categoria', $cliente->CATEGORIA ?? '') == $c->CODIGO ? 'selected' : '' }}>{{ $c->DESCRIPCIONCATEGORIA }}</option>
+              <option value="{{ $c->CODIGO }}" {{ old('categoria', $categoriaCodigo) == $c->CODIGO ? 'selected' : '' }}>{{ $c->DESCRIPCIONCATEGORIA }}</option>
             @endforeach
           </select>
         </div>
@@ -54,14 +54,14 @@
           <select name="tipocliente" class="form-select">
             <option value="">— Seleccionar —</option>
             @foreach($tipos as $t)
-              <option value="{{ $t->CODIGO }}" {{ old('tipocliente', $cliente->TIPOCLIENTE ?? '') == $t->CODIGO ? 'selected' : '' }}>{{ $t->DESCRIPCION }}</option>
+              <option value="{{ $t->CODIGO }}" {{ old('tipocliente', $tipoCodigo) == $t->CODIGO ? 'selected' : '' }}>{{ $t->DESCRIPCION }}</option>
             @endforeach
           </select>
         </div>
 
         <div>
           <label class="form-label">Contacto</label>
-          <input type="text" name="contacto" value="{{ old('contacto', $cliente->CONTACTO ?? '') }}" class="form-input" placeholder="Nombre del contacto">
+          <input type="text" name="contacto" value="{{ old('contacto', $contactoNombre) }}" class="form-input" placeholder="Nombre del contacto">
         </div>
 
         <div>
