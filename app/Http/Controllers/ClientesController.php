@@ -163,7 +163,6 @@ class ClientesController extends Controller
     public function update(string $codigo, Request $request)
     {
         $comercial = (int) session('comercial_id');
-        $cliente   = $this->api->obtenerCliente($codigo);
 
         $esExt = $request->input('es_extracomunitario', 'N');
         $impuesto = match($esExt) {
@@ -204,9 +203,9 @@ class ClientesController extends Controller
             'telefonomovilenviomercancia'     => $request->input('telefonomovilenviomercancia', ''),
             'faxenviomercancia'               => $request->input('faxenviomercancia', ''),
             'correoenviomercancia'            => $request->input('correoenviomercancia', ''),
-            'vendedor'                        => $cliente->VENDEDOR_ASIGNADO ?? $cliente->USUARIO_ALTA ?? $comercial,
-            'vendedor_asignado'               => $cliente->VENDEDOR_ASIGNADO ?? $cliente->USUARIO_ALTA ?? $comercial,
-            'usuario_alta'                    => $cliente->USUARIO_ALTA ?? $comercial,
+            'vendedor'                        => $comercial,
+            'vendedor_asignado'               => $comercial,
+            'usuario_alta'                    => $comercial,
             'usuario_ultima_modificacion'     => $comercial,
             'es_extracomunitario'             => $esExt,
             'impuesto'                        => $impuesto,
