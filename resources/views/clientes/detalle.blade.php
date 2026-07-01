@@ -35,7 +35,8 @@
           </div>
         @endif
       </div>
-      <div class="shrink-0">
+      <div class="shrink-0 flex items-center gap-2">
+        <a href="{{ route('clientes.editar', $cliente->CODIGO ?? $codigo) }}" class="btn btn-primary btn-sm">Editar</a>
         <a href="{{ route('clientes.index') }}" class="btn btn-secondary btn-sm">← Volver</a>
       </div>
     </div>
