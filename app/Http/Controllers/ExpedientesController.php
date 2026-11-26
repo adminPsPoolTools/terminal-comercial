@@ -25,7 +25,7 @@ class ExpedientesController extends Controller
 
         $filtros = [
             'cliente'         => '',
-            'fecha_desde'     => $this->fechaApi($request->input('fecha_desde'), '01/01/2000'),
+            'fecha_desde'     => $this->fechaApi($request->input('fecha_desde'), date('Y-m-d', strtotime('-1 month'))), // por defecto, último mes
             // La API compara UPPER(descripcion) LIKE '%texto%' sin pasar el texto a mayúsculas
             'descripcion'     => mb_strtoupper(trim((string) $request->input('descripcion', ''))),
             'comercial'       => $comercial,

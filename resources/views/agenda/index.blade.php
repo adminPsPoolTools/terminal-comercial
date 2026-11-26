@@ -13,7 +13,7 @@
       <div class="filter-group w-full sm:w-auto">
         <label class="form-label">Fecha desde</label>
         <input id="inp-fecha" type="text" class="form-input" placeholder="dd/mm/aaaa"
-               value="{{ date('01/01/Y') }}" style="min-width:120px">
+               value="{{ date('d/m/Y', strtotime('-1 month')) }}" style="min-width:120px">
       </div>
 
       <div class="filter-group w-full sm:w-auto sm:flex-1" style="min-width:160px">

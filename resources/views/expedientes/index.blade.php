@@ -5,7 +5,7 @@
 <div class="space-y-4">
   <div class="crm-card p-4">
     <div class="flex flex-wrap gap-3 items-end">
-      <div class="filter-group w-full sm:w-auto"><label class="form-label">Fecha desde</label><input id="inp-fecha" type="text" class="form-input" value="01/01/2000" style="min-width:120px"></div>
+      <div class="filter-group w-full sm:w-auto"><label class="form-label">Fecha desde</label><input id="inp-fecha" type="text" class="form-input" value="{{ date('d/m/Y', strtotime('-1 month')) }}" placeholder="dd/mm/aaaa" style="min-width:120px"></div>
       <div class="filter-group w-full sm:flex-1" style="min-width:160px"><label class="form-label">Descripción</label><input id="inp-desc" type="text" class="form-input" placeholder="Buscar..."></div>
       <div class="filter-group w-full sm:w-auto"><label class="form-label">Estado</label>
         <select id="sel-estado" class="form-select" style="min-width:140px">

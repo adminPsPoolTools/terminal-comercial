@@ -4,8 +4,8 @@
 <div class="space-y-4">
   <div class="crm-card p-4">
     <div class="flex flex-wrap gap-3 items-end">
-      <div class="filter-group w-full sm:w-auto"><label class="form-label">Fecha desde</label><input id="inp-desde" type="date" class="form-input" style="min-width:140px"></div>
-      <div class="filter-group w-full sm:w-auto"><label class="form-label">Fecha hasta</label><input id="inp-hasta" type="date" class="form-input" style="min-width:140px"></div>
+      <div class="filter-group w-full sm:w-auto"><label class="form-label">Fecha desde</label><input id="inp-desde" type="date" class="form-input" style="min-width:140px" value="{{ date('Y-m-d', strtotime('-1 month')) }}"></div>
+      <div class="filter-group w-full sm:w-auto"><label class="form-label">Fecha hasta</label><input id="inp-hasta" type="date" class="form-input" style="min-width:140px" value="{{ date('Y-m-d') }}"></div>
       <div class="filter-group w-full sm:flex-1" style="min-width:160px"><label class="form-label">Comentario</label><input id="inp-comentario" type="text" class="form-input" placeholder="Buscar..."></div>
       <div class="filter-group w-full sm:w-auto"><label class="form-label">Tipo de gasto</label>
         <select id="sel-tipo" class="form-select" style="min-width:150px">

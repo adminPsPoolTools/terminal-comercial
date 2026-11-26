@@ -4,7 +4,7 @@
 <div class="space-y-4">
   <div class="crm-card p-4">
     <div class="flex flex-wrap gap-3 items-end">
-      <div class="filter-group w-full sm:w-auto"><label class="form-label">Fecha desde</label><input id="inp-fecha" type="date" class="form-input" style="min-width:160px"></div>
+      <div class="filter-group w-full sm:w-auto"><label class="form-label">Fecha desde</label><input id="inp-fecha" type="date" class="form-input" style="min-width:160px" value="{{ date('Y-m-d', strtotime('-1 month')) }}"></div>
       <div class="filter-group w-full sm:w-auto"><label class="form-label">Estado</label>
         <select id="sel-estado" class="form-select" style="min-width:150px">
           <option selected>Todos</option>

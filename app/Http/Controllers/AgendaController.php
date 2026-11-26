@@ -27,7 +27,7 @@ class AgendaController extends Controller
         $comercial = session('comercial_id');
 
         $filtros = [
-            'fecha_desde'    => $this->fechaApi($request->input('fecha_desde'), '01/01/2000'),
+            'fecha_desde'    => $this->fechaApi($request->input('fecha_desde'), date('Y-m-d', strtotime('-1 month'))), // por defecto, último mes
             'titulo'         => $request->input('titulo', ''),
             'realizado'      => $request->input('realizado', ''),
             'con_alarma'     => $request->input('con_alarma', ''),
