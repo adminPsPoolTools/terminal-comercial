@@ -23,11 +23,11 @@
         @foreach($agendas as $row)
           @if(!is_null($row->CODIGO ?? null))
           <tr>
-            <td class="font-mono text-xs text-slate-400">{{ $row->CODIGO }}</td>
+            <td class="font-mono text-xs"><a href="{{ route('agenda.detalle', $row->CODIGO) }}" class="text-blue-600 hover:underline">{{ $row->CODIGO }}</a></td>
             <td class="font-medium">{{ $row->FECHA ?? '—' }}</td>
             <td>{{ $row->HORA ?? '—' }}</td>
             <td class="max-w-xs truncate font-medium">
-              <a href="#" class="text-blue-600 hover:underline">
+              <a href="{{ route('agenda.detalle', $row->CODIGO) }}" class="text-blue-600 hover:underline">
                 {{ $row->TITULO ?? '—' }}
               </a>
             </td>
@@ -56,7 +56,7 @@
             </td>
             <td class="text-xs">
               @if(!empty($row->EXPEDIENTE))
-                <span class="badge badge-blue">{{ $row->EXPEDIENTE }}</span>
+                <a href="{{ route('expedientes.detalle', $row->EXPEDIENTE) }}" class="badge badge-blue hover:underline">{{ $row->EXPEDIENTE }}</a>
               @else
                 <span class="text-slate-300">—</span>
               @endif

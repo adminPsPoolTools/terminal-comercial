@@ -49,4 +49,45 @@ class ExpedientesController extends Controller
 
         return view('expedientes.list', compact('expedientes', 'comercial', 'vendedores'));
     }
+
+    /**
+     * Informe del expediente: datos, clientes, contactos, agendas, presupuestos, pedidos y visitas.
+     * Sustituye a informe_expediente.php del sistema antiguo.
+     */
+    public function detalle(string $codigo)
+    {
+        $expediente = $this->api->obtenerExpediente($codigo);
+
+        if (! $expediente) {
+            abort(404, 'Expediente no encontrado');
+        }
+
+        $estadoDesc = '';
+        foreach ($this->api->obtenerEstadosExpediente() as $e) {
+            if (trim((string) ($e->CODIGO ?? '')) === trim((string) ($expediente->ESTADO ?? ''))) {
+                $estadoDesc = $e->DESCRIPCION ?? '';
+                break;
+            }
+        }
+
+        $comercialNombre = '';
+        foreach ($this->api->obtenerVendedores() as $v) {
+            if (trim((string) ($v->CODIGO ?? '')) === trim((string) ($expediente->COMERCIAL ?? ''))) {
+                $comercialNombre = $v->NOMBRE ?? '';
+                break;
+            }
+        }
+
+        $clientes     = $this->api->obtenerClientesExpediente($codigo);
+        $contactos    = $this->api->obtenerContactosExpediente($codigo);
+        $agendas      = $this->api->obtenerAgendasExpediente($codigo);
+        $presupuestos = $this->api->obtenerPresupuestosExpediente($codigo);
+        $pedidos      = $this->api->obtenerPedidosExpediente($codigo);
+        $visitas      = $this->api->obtenerVisitasExpediente($codigo);
+
+        return view('expedientes.detalle', compact(
+            'expediente', 'codigo', 'estadoDesc', 'comercialNombre',
+            'clientes', 'contactos', 'agendas', 'presupuestos', 'pedidos', 'visitas'
+        ));
+    }
 }

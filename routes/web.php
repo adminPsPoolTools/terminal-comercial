@@ -39,6 +39,8 @@ Route::middleware('auth.comercial')->group(function () {
     // Agenda
     Route::get('/agenda',       [AgendaController::class, 'index'])->name('agenda.index');
     Route::get('/agenda/list',  [AgendaController::class, 'list'])->name('agenda.list');
+    Route::get('/agenda/{codigo}',         [AgendaController::class, 'detalle'])->name('agenda.detalle')->where('codigo', '[0-9]+');
+    Route::post('/agenda/{codigo}/estado', [AgendaController::class, 'cambiarEstado'])->name('agenda.estado')->where('codigo', '[0-9]+');
 
     // Clientes
     Route::get('/clientes',                    [ClientesController::class, 'index'])->name('clientes.index');
@@ -65,6 +67,7 @@ Route::middleware('auth.comercial')->group(function () {
     // Expedientes
     Route::get('/expedientes',      [ExpedientesController::class, 'index'])->name('expedientes.index');
     Route::get('/expedientes/list', [ExpedientesController::class, 'list'])->name('expedientes.list');
+    Route::get('/expedientes/{codigo}', [ExpedientesController::class, 'detalle'])->name('expedientes.detalle')->where('codigo', '[0-9]+');
 
     // Gastos
     Route::get('/gastos',      [GastosController::class, 'index'])->name('gastos.index');

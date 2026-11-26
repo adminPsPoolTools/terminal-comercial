@@ -94,6 +94,88 @@ class ApiService
         return $this->getArray('buscarAgendas', $filtros);
     }
 
+    // ── Detalle de agenda (antes mantenimientos/M_agenda.php) ───────────────
+
+    /** SELECT * FROM AGENDA: CODIGO, FECHA, HORA, TITULO, DESCRIPCION, AGENDA_COMENTARIO_INTERNO, USUARIO, USUARIO_ORIGEN, ESTADO, EXPEDIENTE, CARACTER, ... */
+    public function obtenerAgenda(string $codigo): ?object
+    {
+        return $this->getItem('obtenerAgendaPorCodigo', ['codigo' => $codigo]);
+    }
+
+    /** Historial de cambios de estado (ESTADOS_REGISTRO_AGENDA), más reciente primero. */
+    public function obtenerHistorialEstadosAgenda(string $codigo): array
+    {
+        return $this->getArray('obtenerEstadosDetalleAgenda', ['agenda' => $codigo]);
+    }
+
+    /** Catálogo ESTADOS_AGENDA (CODIGO, DESCRIPCION, REALIZAR_POR_USUARIO). */
+    public function obtenerEstadosAgenda(): array
+    {
+        return $this->getArray('obtenerEstadosAgenda');
+    }
+
+    /** Estados seleccionables al cambiar el estado (ESTADOS_EXPEDIENTES con su ESTADO_AGENDA_ASOCIADO). */
+    public function obtenerEstadosCambioAgenda(int $comercial): array
+    {
+        return $this->getArray('obtenerEstadosSeccionAgendasEstados', ['comercial' => $comercial]);
+    }
+
+    /** Catálogo CARACTER_AGENDA (urgencia). */
+    public function obtenerCaracteresAgenda(): array
+    {
+        return $this->getArray('obtenerCaracterAgenda');
+    }
+
+    /** Inserta una línea en el historial de estados de la agenda. */
+    public function registrarEstadoAgenda(array $datos): bool
+    {
+        return $this->requestSuccessful('POST', $this->makeApiUrl('actualizarCrearEstadoRegistro'), $datos);
+    }
+
+    /** Actualiza ESTADO, USUARIO y alarmas de la agenda (PUT actualizarEstadoAgenda). */
+    public function actualizarEstadoAgenda(array $datos): bool
+    {
+        return $this->requestSuccessful('PUT', $this->makeApiUrl('actualizarEstadoAgenda'), $datos);
+    }
+
+    // ── Informe de expediente (antes informe_expediente.php) ────────────────
+
+    public function obtenerExpediente(string $codigo): ?object
+    {
+        return $this->getItem('obtenerExpediente', ['expediente' => $codigo]);
+    }
+
+    public function obtenerContactosExpediente(string $codigo): array
+    {
+        return $this->getArray('obtenerContactosExpediente', ['expediente' => $codigo]);
+    }
+
+    public function obtenerClientesExpediente(string $codigo): array
+    {
+        return $this->getArray('obtenerClientePorExpediente', ['expediente' => $codigo]);
+    }
+
+    /** Agendas del expediente (la API solo devuelve las posteriores a 2024-01-01). */
+    public function obtenerAgendasExpediente(string $codigo): array
+    {
+        return $this->getArray('obtenerAgenda', ['expediente' => $codigo]);
+    }
+
+    public function obtenerPresupuestosExpediente(string $codigo): array
+    {
+        return $this->getArray('obtenerPresupuestosExpediente', ['expediente' => $codigo]);
+    }
+
+    public function obtenerPedidosExpediente(string $codigo): array
+    {
+        return $this->getArray('obtenerPedidosExpediente', ['expediente' => $codigo]);
+    }
+
+    public function obtenerVisitasExpediente(string $codigo): array
+    {
+        return $this->getArray('obtenerVisitasPorExpediente', ['expediente' => $codigo]);
+    }
+
     public function obtenerEstadosExpediente(): array
     {
         return $this->getArray('obtenerEstadosExpediente');
