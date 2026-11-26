@@ -27,26 +27,19 @@ class AgendaController extends Controller
         $comercial = session('comercial_id');
 
         $filtros = [
-            'fecha_desde'    => $this->toFirebirdDate($request->input('fecha_desde', '01/01/2000')),
+            'fecha_desde'    => $this->fechaApi($request->input('fecha_desde'), '01/01/2000'),
             'titulo'         => $request->input('titulo', ''),
             'realizado'      => $request->input('realizado', ''),
             'con_alarma'     => $request->input('con_alarma', ''),
             'recordatorio'   => $request->input('recordatorio', ''),
             'estado'         => $request->input('estado', ''),
             'comercial'      => $comercial,
-            'usuario'        => $request->input('usuario', $comercial),
+            // Solo los administradores (crm.admin_comerciales) pueden consultar otro usuario
+            'usuario'        => $this->usuarioConsultado($request->input('usuario')),
             'codigo_cliente' => $request->input('codigo_cliente', ''),
         ];
 
         $agendas = $this->api->buscarAgendas($filtros);
         return view('agenda.list', compact('agendas', 'comercial'));
-    }
-
-    private function toFirebirdDate(string $fecha): string
-    {
-        if (preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $fecha)) {
-            return substr($fecha,3,2) . '/' . substr($fecha,0,2) . '/' . substr($fecha,6,4);
-        }
-        return $fecha;
     }
 }

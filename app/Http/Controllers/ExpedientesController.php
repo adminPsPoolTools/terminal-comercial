@@ -25,7 +25,7 @@ class ExpedientesController extends Controller
 
         $filtros = [
             'cliente'         => '',
-            'fecha_desde'     => $request->input('fecha_desde', '01/01/2000'),
+            'fecha_desde'     => $this->fechaApi($request->input('fecha_desde'), '01/01/2000'),
             'descripcion'     => $request->input('descripcion', ''),
             'comercial'       => $comercial,
             'provincia'       => $request->input('provincia', ''),

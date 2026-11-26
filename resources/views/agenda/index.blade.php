@@ -111,6 +111,9 @@ function buscarAgenda() {
   }, function(html) {
     $('#div-agenda').html(html);
     btn.disabled = false;
+  }).fail(function() {
+    $('#div-agenda').html('<div class="empty-state">Error al cargar la agenda. Inténtalo de nuevo.</div>');
+    btn.disabled = false;
   });
 }
 

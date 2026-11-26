@@ -115,7 +115,8 @@ function buscar() {
     poblacion: $('#sel-poblacion').val(), proyecto: $('#sel-proyecto').val(),
     caracter: $('#sel-caracter').val(), orden: $('#sel-orden').val(),
     orden_ori: $('#sel-orden-ori').val(),
-  }, function(html) { $('#div-presupuestos').html(html); btn.disabled = false; });
+  }, function(html) { $('#div-presupuestos').html(html); btn.disabled = false; })
+   .fail(function() { $('#div-presupuestos').html('<div class="empty-state">Error al cargar presupuestos. Inténtalo de nuevo.</div>'); btn.disabled = false; });
 }
 $(function() { buscar(); });
 </script>

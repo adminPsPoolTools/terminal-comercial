@@ -16,7 +16,7 @@
 
     {{-- Logo --}}
     <div class="text-center mb-8">
-      <img src="{{ asset('jpg/logo_Gesplanet.jpg') }}" alt="Gesplanet"
+      <img src="{{ asset('logo_Gesplanet.jpg') }}" alt="Gesplanet"
         class="h-12 mx-auto object-contain brightness-0 invert mb-4" onerror="this.style.display='none'">
       <h1 class="font-head font-bold text-2xl text-white">CRM Comercial</h1>
       <p class="text-slate-400 text-sm mt-1">Ps-pool</p>
@@ -61,7 +61,7 @@
       {{-- RRHH form --}}
       <div id="form-rrhh" class="p-8 hidden">
         <div class="flex justify-center mb-5">
-          <img src="{{ asset('jpg/logo_gesplanet_recursos_humanos.png') }}" alt="RRHH" class="h-14 object-contain"
+          <img src="{{ asset('logo_gesplanet_recursos_humanos.png') }}" alt="RRHH" class="h-14 object-contain"
             onerror="this.style.display='none'">
         </div>
         <div class="space-y-4">

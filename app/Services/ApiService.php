@@ -6,6 +6,19 @@ use Illuminate\Support\Facades\Log;
 
 class ApiService
 {
+    /** Código de excepción: no se pudo conectar con el host (DNS, rechazado, timeout de conexión). */
+    protected const ERR_CONNECT = 1001;
+
+    /** Código de excepción: conectó pero la respuesta no llegó a tiempo. */
+    protected const ERR_TIMEOUT = 1002;
+
+    /**
+     * Hosts sin conexión detectados durante la petición HTTP actual
+     * (estático: se comparte entre instancias y se reinicia en cada petición PHP).
+     * Evita esperar el timeout de conexión en cada llamada de una misma página.
+     */
+    protected static array $unreachableHosts = [];
+
     protected array $apiBaseUrls;
     protected array $rhBaseUrls;
     protected int $timeout;
@@ -188,12 +201,12 @@ class ApiService
 
     public function obtenerVentasSgfa(string $fechaDesde, string $codigo): array
     {
-        return $this->getArray('obtenerVentasSgfa', ['fecha_desde' => $fechaDesde, 'cliente' => $codigo, 'proyecto' => 1]);
+        return $this->getArray('obtenerVentasSgfa', ['fecha_desde' => $fechaDesde, 'cliente' => $codigo, 'proyecto' => config('crm.proyecto', 1)]);
     }
 
     public function obtenerArticulosVendidos(string $fechaDesde, string $codigo): array
     {
-        return $this->getArray('obtenerArticulosVendidos', ['fecha_desde' => $fechaDesde, 'cliente' => $codigo, 'proyecto' => 1]);
+        return $this->getArray('obtenerArticulosVendidos', ['fecha_desde' => $fechaDesde, 'cliente' => $codigo, 'proyecto' => config('crm.proyecto', 1)]);
     }
 
     public function obtenerLlamadasCliente(string $codigo): array
@@ -454,8 +467,36 @@ class ApiService
             'attempts' => [],
         ];
 
-        foreach ($this->candidateMethods($method) as $candidateMethod) {
-            foreach ($this->candidateUrls($url) as $candidateUrl) {
+        // Estrategia de reintentos (antes se probaban TODAS las combinaciones
+        // método × URL × transporte, hasta ~40 s por llamada con la API caída,
+        // y las páginas con varias llamadas superaban el límite de 60 s de PHP):
+        //  - Error de conexión (host caído / sin red): se marca el host como caído
+        //    para el resto de la petición y se pasa a la siguiente URL base.
+        //  - Timeout esperando respuesta: no se repite con otro transporte/método
+        //    (solo duplicaría la espera); se pasa a la siguiente URL base.
+        //  - Otro error de transporte (p. ej. SSL en cURL): se prueba el siguiente transporte.
+        //  - HTTP 404/405 en un GET: se reintenta como POST (endpoints antiguos solo POST).
+        //  - Cualquier otro HTTP de error: se pasa a la siguiente URL base.
+        foreach ($this->candidateUrls($url) as $candidateUrl) {
+            $host = $this->hostKey($candidateUrl);
+
+            if (isset(self::$unreachableHosts[$host])) {
+                $attempts[] = [
+                    'method' => strtoupper($method),
+                    'url' => $candidateUrl,
+                    'transport' => null,
+                    'status' => 0,
+                    'error' => 'Omitido: host sin conexión en un intento anterior (' . self::$unreachableHosts[$host] . ')',
+                ];
+                $lastFailure = array_merge($lastFailure, [
+                    'url' => $candidateUrl,
+                    'error' => self::$unreachableHosts[$host],
+                    'attempts' => $attempts,
+                ]);
+                continue;
+            }
+
+            foreach ($this->candidateMethods($method) as $candidateMethod) {
                 foreach ($this->candidateTransports() as $transport) {
                     $prepared = $this->prepareRequest($candidateMethod, $candidateUrl, $data);
 
@@ -480,6 +521,16 @@ class ApiService
                             'error' => $e->getMessage(),
                             'attempts' => $attempts,
                         ];
+
+                        if ($e->getCode() === self::ERR_CONNECT) {
+                            self::$unreachableHosts[$host] = $e->getMessage();
+                            continue 3;
+                        }
+
+                        if ($e->getCode() === self::ERR_TIMEOUT) {
+                            continue 3;
+                        }
+
                         continue;
                     }
 
@@ -503,7 +554,12 @@ class ApiService
                             'error' => null,
                             'attempts' => $attempts,
                         ];
-                        continue;
+
+                        if (in_array($response['status'], [404, 405], true)) {
+                            continue 2; // siguiente método (GET → POST)
+                        }
+
+                        continue 3; // siguiente URL base
                     }
 
                     $decoded = $this->decodeResponse($response['body'], $logContext, $response['url'], $logFailures);
@@ -520,6 +576,9 @@ class ApiService
                         'attempts' => $attempts,
                     ];
                 }
+
+                // Todos los transportes fallaron con este método: siguiente URL base.
+                continue 2;
             }
         }
 
@@ -619,8 +678,18 @@ class ApiService
 
         if ($body === false) {
             $error = curl_error($ch) ?: 'Unknown cURL error';
+            $errno = curl_errno($ch);
+            $connected = (float) curl_getinfo($ch, CURLINFO_CONNECT_TIME) > 0;
             curl_close($ch);
-            throw new \RuntimeException($error);
+
+            // 6: no resuelve DNS, 7: conexión rechazada, 28: timeout (de conexión si no llegó a conectar)
+            $code = match (true) {
+                in_array($errno, [6, 7], true), $errno === 28 && ! $connected => self::ERR_CONNECT,
+                $errno === 28 => self::ERR_TIMEOUT,
+                default => 0,
+            };
+
+            throw new \RuntimeException($error, $code);
         }
 
         $status = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -657,8 +726,9 @@ class ApiService
         $status = $this->extractStatusFromHeaders($responseHeaders);
 
         if ($body === false && $status === 0) {
+            // Sin cabeceras de respuesta: no hubo conexión con el servidor.
             $error = error_get_last();
-            throw new \RuntimeException($error['message'] ?? 'Unknown stream transport error.');
+            throw new \RuntimeException($error['message'] ?? 'Unknown stream transport error.', self::ERR_CONNECT);
         }
 
         return [
@@ -900,6 +970,13 @@ class ApiService
         }
 
         return 0;
+    }
+
+    protected function hostKey(string $url): string
+    {
+        $parts = parse_url($url);
+
+        return strtolower(($parts['host'] ?? $url) . ':' . ($parts['port'] ?? (($parts['scheme'] ?? 'http') === 'https' ? 443 : 80)));
     }
 
     protected function extractEndpoint(string $url): string

@@ -35,7 +35,7 @@
 function buscar(){
   var btn=document.getElementById('btn-buscar'); btn.disabled=true;
   $('#div-gastos').html('<div class="flex items-center justify-center gap-3 py-16 text-slate-400 text-sm"><span class="spinner"></span> Cargando...</div>');
-  $.get('{{ route("gastos.list") }}',{fecha_desde:$('#inp-desde').val(),fecha_hasta:$('#inp-hasta').val(),comentario:$('#inp-comentario').val(),tipo_gasto:$('#sel-tipo').val(),medio_cobro:$('#sel-medio').val(),pagado:$('#sel-pagado').val()},function(html){$('#div-gastos').html(html);btn.disabled=false;});
+  $.get('{{ route("gastos.list") }}',{fecha_desde:$('#inp-desde').val(),fecha_hasta:$('#inp-hasta').val(),comentario:$('#inp-comentario').val(),tipo_gasto:$('#sel-tipo').val(),medio_cobro:$('#sel-medio').val(),pagado:$('#sel-pagado').val()},function(html){$('#div-gastos').html(html);btn.disabled=false;}).fail(function(){$('#div-gastos').html('<div class="empty-state">Error al cargar gastos. Inténtalo de nuevo.</div>');btn.disabled=false;});
 }
 $(function(){buscar();});
 </script>

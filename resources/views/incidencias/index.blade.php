@@ -18,7 +18,7 @@
 @endsection
 @push('scripts')
 <script>
-function buscar(){var btn=document.getElementById('btn-buscar');btn.disabled=true;$('#div-inc').html('<div class="flex items-center justify-center gap-3 py-16 text-slate-400 text-sm"><span class="spinner"></span> Cargando...</div>');$.get('{{ route("incidencias.list") }}',{fecha_desde:$('#inp-fecha').val(),estado:$('#sel-estado').val()},function(html){$('#div-inc').html(html);btn.disabled=false;});}
+function buscar(){var btn=document.getElementById('btn-buscar');btn.disabled=true;$('#div-inc').html('<div class="flex items-center justify-center gap-3 py-16 text-slate-400 text-sm"><span class="spinner"></span> Cargando...</div>');$.get('{{ route("incidencias.list") }}',{fecha_desde:$('#inp-fecha').val(),estado:$('#sel-estado').val()},function(html){$('#div-inc').html(html);btn.disabled=false;}).fail(function(){$('#div-inc').html('<div class="empty-state">Error al cargar incidencias. Inténtalo de nuevo.</div>');btn.disabled=false;});}
 $(function(){buscar();});
 </script>
 @endpush

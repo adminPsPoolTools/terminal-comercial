@@ -14,8 +14,9 @@ class ClientesController extends Controller
         $comercial  = session('comercial_id');
         $categorias = $this->api->obtenerCategorias();
         $tipos      = $this->api->obtenerTipos();
+        $provincias = $this->api->obtenerProvincias();
 
-        return view('clientes.index', compact('comercial', 'categorias', 'tipos'));
+        return view('clientes.index', compact('comercial', 'categorias', 'tipos', 'provincias'));
     }
 
     public function detalle(string $codigo)
@@ -257,14 +258,14 @@ class ClientesController extends Controller
 
     public function tabVentasSgfa(string $codigo, Request $request)
     {
-        $fechaDesde = $request->input('fecha_desde', date('Y-01-01'));
+        $fechaDesde = $this->fechaApi($request->input('fecha_desde'), date('Y-01-01'));
         $ventas     = $this->api->obtenerVentasSgfa($fechaDesde, $codigo);
         return view('clientes.tabs.ventas_sgfa', compact('ventas', 'fechaDesde'));
     }
 
     public function tabArticulosVendidos(string $codigo, Request $request)
     {
-        $fechaDesde = $request->input('fecha_desde', date('Y-01-01'));
+        $fechaDesde = $this->fechaApi($request->input('fecha_desde'), date('Y-01-01'));
         $articulos  = $this->api->obtenerArticulosVendidos($fechaDesde, $codigo);
         return view('clientes.tabs.articulos_vendidos', compact('articulos', 'fechaDesde'));
     }
@@ -278,7 +279,7 @@ class ClientesController extends Controller
     public function tabAlbaranes(string $codigo, Request $request)
     {
         $comercial  = (int) session('comercial_id');
-        $fechaDesde = $request->input('fecha_desde', date('Y-01-01'));
+        $fechaDesde = $this->fechaApi($request->input('fecha_desde'), date('Y-01-01'));
         $albaranes  = $this->api->obtenerAlbaranesCliente($fechaDesde, $comercial, $codigo);
         return view('clientes.tabs.albaranes', compact('albaranes', 'fechaDesde'));
     }

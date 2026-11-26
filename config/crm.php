@@ -114,4 +114,13 @@ return [
 
     'proyecto' => (int) env('CRM_PROYECTO', 1),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Formato de fecha enviado a la API (formato PHP de date())
+    |--------------------------------------------------------------------------
+    | Y-m-d es el único que Firebird interpreta sin ambigüedad. Cambiar aquí
+    | si algún endpoint de la API espera otro formato (p. ej. 'd.m.Y').
+    */
+    'api_date_format' => env('CRM_API_DATE_FORMAT', 'Y-m-d'),
+
 ];

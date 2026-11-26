@@ -27,7 +27,7 @@
 @endsection
 @push('scripts')
 <script>
-function buscar(){var btn=document.getElementById('btn-buscar');btn.disabled=true;$('#div-pedidos').html('<div class="flex items-center justify-center gap-3 py-16 text-slate-400 text-sm"><span class="spinner"></span> Cargando...</div>');$.get('{{ route("pedidos.list") }}',{fecha_desde:$('#inp-fecha').val(),titulo:$('#inp-titulo').val(),estado:$('#sel-estado').val(),estado_servido:$('#sel-servido').val()},function(html){$('#div-pedidos').html(html);btn.disabled=false;});}
+function buscar(){var btn=document.getElementById('btn-buscar');btn.disabled=true;$('#div-pedidos').html('<div class="flex items-center justify-center gap-3 py-16 text-slate-400 text-sm"><span class="spinner"></span> Cargando...</div>');$.get('{{ route("pedidos.list") }}',{fecha_desde:$('#inp-fecha').val(),titulo:$('#inp-titulo').val(),estado:$('#sel-estado').val(),estado_servido:$('#sel-servido').val()},function(html){$('#div-pedidos').html(html);btn.disabled=false;}).fail(function(){$('#div-pedidos').html('<div class="empty-state">Error al cargar pedidos. Inténtalo de nuevo.</div>');btn.disabled=false;});}
 $(function(){buscar();});
 </script>
 @endpush

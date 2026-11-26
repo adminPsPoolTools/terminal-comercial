@@ -24,8 +24,8 @@ class GastosController extends Controller
 
         $filtros = [
             'comercial'      => $comercial,
-            'fecha_desde'    => $request->input('fecha_desde', ''),
-            'fecha_hasta'    => $request->input('fecha_hasta', ''),
+            'fecha_desde'    => $this->fechaApi($request->input('fecha_desde'), '01/01/2000'),
+            'fecha_hasta'    => $this->fechaApi($request->input('fecha_hasta'), '31/12/2099'),
             'comentario'     => $request->input('comentario', ''),
             'tipo_gasto'     => $request->input('tipo_gasto', '0'),
             'medio_cobro'    => $request->input('medio_cobro', '0'),

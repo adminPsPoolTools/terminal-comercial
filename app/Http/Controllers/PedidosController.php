@@ -30,7 +30,7 @@ class PedidosController extends Controller
 
         $filtros = [
             'cliente'         => $request->input('cliente', ''),
-            'fecha_desde'     => $request->input('fecha_desde', date('01/01/Y')),
+            'fecha_desde'     => $this->fechaApi($request->input('fecha_desde'), date('01/01/Y')),
             'titulo'          => $request->input('titulo', ''),
             'estado'          => $request->input('estado', ''),
             'comercial'       => $comercial,

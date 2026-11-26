@@ -16,32 +16,37 @@
 
     @php
       $listados = [
-        ['id'=>'ventas-prov', 'label'=>'Ventas clientes por provincias', 'icon'=>'list', 'url'=>'/listados/ventas-clientes'],
-        ['id'=>'ventas-secc', 'label'=>'Ventas artículos por secciones', 'icon'=>'package', 'url'=>'/listados/ventas-secciones'],
-        ['id'=>'clientes-nuevos', 'label'=>'Clientes nuevos', 'icon'=>'users', 'url'=>'/listados/clientes-nuevos'],
-        ['id'=>'ventas-prov2', 'label'=>'Ventas por provincias', 'icon'=>'target', 'url'=>'/listados/ventas-provincias'],
-        ['id'=>'ranking-ventas', 'label'=>'Ranking ventas', 'icon'=>'dollar', 'url'=>'/listados/ranking-ventas'],
-        ['id'=>'ranking-visitas', 'label'=>'Ranking visitas comerciales', 'icon'=>'briefcase', 'url'=>'/listados/ranking-visitas'],
-        ['id'=>'control-visitas', 'label'=>'Control de visitas', 'icon'=>'calendar', 'url'=>'/listados/control-visitas'],
-        ['id'=>'facturas', 'label'=>'Facturas clientes', 'icon'=>'file-text', 'url'=>'/listados/facturas-clientes'],
-        ['id'=>'clientes-list', 'label'=>'Listado clientes', 'icon'=>'users', 'url'=>'/listados/clientes'],
+        // 'route' => null: listado del sistema antiguo aún sin endpoint/ruta migrada
+        ['id'=>'ventas-prov', 'label'=>'Ventas clientes por provincias', 'icon'=>'list', 'route'=>'listados.ventas-clientes'],
+        ['id'=>'ventas-secc', 'label'=>'Ventas artículos por secciones', 'icon'=>'package', 'route'=>null],
+        ['id'=>'clientes-nuevos', 'label'=>'Clientes nuevos', 'icon'=>'users', 'route'=>null],
+        ['id'=>'ventas-prov2', 'label'=>'Ventas por provincias', 'icon'=>'target', 'route'=>null],
+        ['id'=>'ranking-ventas', 'label'=>'Ranking ventas', 'icon'=>'dollar', 'route'=>null],
+        ['id'=>'ranking-visitas', 'label'=>'Ranking visitas comerciales', 'icon'=>'briefcase', 'route'=>null],
+        ['id'=>'control-visitas', 'label'=>'Control de visitas', 'icon'=>'calendar', 'route'=>null],
+        ['id'=>'facturas', 'label'=>'Facturas clientes', 'icon'=>'file-text', 'route'=>null],
+        ['id'=>'clientes-list', 'label'=>'Listado clientes', 'icon'=>'users', 'route'=>'listados.clientes'],
       ];
     @endphp
 
     @foreach($listados as $l)
-    <div class="crm-card p-5 hover:shadow-md transition-shadow">
+    <div class="crm-card p-5 {{ $l['route'] ? 'hover:shadow-md transition-shadow' : 'opacity-60' }}">
       <div class="flex items-start gap-3 mb-3">
         <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
           @include('partials.icon', ['name' => $l['icon']])
         </div>
         <h3 class="font-head font-semibold text-sm text-slate-800 leading-snug flex-1">{{ $l['label'] }}</h3>
       </div>
+      @if($l['route'])
       <div class="flex gap-2">
-        <button onclick="cargarListado('{{ $l['url'] }}', 'mensual', this)"
+        <button onclick="cargarListado('{{ route($l['route']) }}', 'mensual', this)"
                 class="btn btn-secondary btn-sm flex-1">Mensual</button>
-        <button onclick="cargarListado('{{ $l['url'] }}', 'anual', this)"
+        <button onclick="cargarListado('{{ route($l['route']) }}', 'anual', this)"
                 class="btn btn-secondary btn-sm flex-1">Anual</button>
       </div>
+      @else
+      <p class="text-xs text-slate-400">Pendiente de migrar del sistema antiguo.</p>
+      @endif
     </div>
     @endforeach
 
@@ -64,11 +69,13 @@
 @push('scripts')
 <script>
 function cargarListado(url, tipo, btn) {
-  var fullUrl = url + '?fecha_desde=' + $('#inp-desde').val() + '&fecha_hasta=' + $('#inp-hasta').val() + '&tipo=' + tipo;
   $('#div-listado').removeClass('hidden');
+  $('#listado-title').text($(btn).closest('.crm-card').find('h3').text() + ' · ' + tipo);
   $('#div-listado-content').html('<div class="flex items-center justify-center gap-3 py-10 text-slate-400 text-sm"><span class="spinner"></span> Cargando ' + tipo + '...</div>');
   document.getElementById('div-listado').scrollIntoView({behavior:'smooth'});
-  $.get(fullUrl, function(html) { $('#div-listado-content').html(html); });
+  $.get(url, { fecha_desde: $('#inp-desde').val(), fecha_hasta: $('#inp-hasta').val(), tipo: tipo },
+        function(html) { $('#div-listado-content').html(html); })
+   .fail(function() { $('#div-listado-content').html('<div class="empty-state">Error al cargar el listado.</div>'); });
 }
 </script>
 @endpush

@@ -49,7 +49,7 @@
 
     {{-- Logo --}}
     <div class="flex items-center gap-3 px-5 py-4 border-b border-white/[.07] shrink-0">
-      <img src="{{ asset('jpg/logo_Gesplanet.jpg') }}" alt="Gesplanet"
+      <img src="{{ asset('logo_Gesplanet.jpg') }}" alt="Gesplanet"
            class="h-8 w-auto object-contain brightness-0 invert opacity-90"
            onerror="this.style.display='none'">
       <div>

@@ -10,7 +10,7 @@
 
       {{-- Header --}}
       <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-8 text-center">
-        <img src="{{ asset('jpg/logo_gesplanet_recursos_humanos.png') }}" alt="RRHH"
+        <img src="{{ asset('logo_gesplanet_recursos_humanos.png') }}" alt="RRHH"
              class="h-14 mx-auto object-contain mb-3"
              onerror="this.style.display='none'">
         <h2 class="font-head font-bold text-lg text-white">Recursos Humanos</h2>

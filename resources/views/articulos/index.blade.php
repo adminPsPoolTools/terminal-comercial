@@ -13,7 +13,7 @@
 @endsection
 @push('scripts')
 <script>
-function buscar(){if(!$('#inp-busq').val()){alert('Introduce al menos un término');return;}var btn=document.getElementById('btn-buscar');btn.disabled=true;$('#div-articulos').html('<div class="flex items-center justify-center gap-3 py-16 text-slate-400 text-sm"><span class="spinner"></span> Cargando...</div>');$.get('{{ route("articulos.list") }}',{busqueda:$('#inp-busq').val()},function(html){$('#div-articulos').html(html);btn.disabled=false;});}
+function buscar(){if(!$('#inp-busq').val()){alert('Introduce al menos un término');return;}var btn=document.getElementById('btn-buscar');btn.disabled=true;$('#div-articulos').html('<div class="flex items-center justify-center gap-3 py-16 text-slate-400 text-sm"><span class="spinner"></span> Cargando...</div>');$.get('{{ route("articulos.list") }}',{busqueda:$('#inp-busq').val()},function(html){$('#div-articulos').html(html);btn.disabled=false;}).fail(function(){$('#div-articulos').html('<div class="empty-state">Error al cargar artículos. Inténtalo de nuevo.</div>');btn.disabled=false;});}
 $('#inp-busq').keypress(function(e){if(e.which===13)buscar();});
 </script>
 @endpush

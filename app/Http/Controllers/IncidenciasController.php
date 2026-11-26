@@ -11,7 +11,7 @@ class IncidenciasController extends Controller {
         $comercial = session('comercial_id');
         $filtros = [
             'comercial'   => $comercial,
-            'fecha_desde' => $request->input('fecha_desde', ''),
+            'fecha_desde' => $this->fechaApi($request->input('fecha_desde'), '01/01/2000'),
             'estado'      => $request->input('estado', ''),
         ];
         $incidencias = $this->api->buscarIncidenciasSat($filtros);

@@ -24,7 +24,7 @@ class PresupuestosController extends Controller
 
         $filtros = [
             'cliente'       => $request->input('cliente', ''),
-            'fecha_desde'   => $request->input('fecha_desde', date('01/01/Y')),
+            'fecha_desde'   => $this->fechaApi($request->input('fecha_desde'), date('01/01/Y')),
             'titulo'        => $request->input('titulo', ''),
             'estado'        => $request->input('estado', ''),
             'comercial'     => $comercial,
@@ -70,7 +70,7 @@ class PresupuestosController extends Controller
                 default => 'badge-gray',
             };
             $result[$cod] = $estado
-                ? "<span class=\"badge {$cls}\">{$estado}</span>"
+                ? "<span class=\"badge {$cls}\">" . e($estado) . "</span>"
                 : '<span class="text-slate-300 text-xs">—</span>';
         }
         return response()->json($result);
@@ -86,7 +86,7 @@ class PresupuestosController extends Controller
             str_contains(strtolower($estado), 'espera') => 'badge-yellow',
             default => 'badge-gray',
         };
-        $badge = $estado ? "<span class=\"badge {$cls}\">{$estado}</span>" : '<span class="text-slate-300 text-xs">—</span>';
+        $badge = $estado ? "<span class=\"badge {$cls}\">" . e($estado) . "</span>" : '<span class="text-slate-300 text-xs">—</span>';
         return response($badge)->header('Content-Type', 'text/html');
     }
 
