@@ -55,8 +55,8 @@ class VisitasController extends Controller
 
         if ($res !== null) {
             // Asignar acciones y asuntos en llamadas separadas
-            $acciones = implode(',', $request->input('acciones', []));
-            $asuntos  = implode(',', $request->input('asuntos', []));
+            $acciones = array_filter((array) $request->input('acciones', []), fn ($v) => $v !== '' && $v !== null);
+            $asuntos  = array_filter((array) $request->input('asuntos', []), fn ($v) => $v !== '' && $v !== null);
             if ($acciones) $this->api->asignarAccionesVisita((string) $codigo, $acciones);
             if ($asuntos)  $this->api->asignarAsuntosVisita((string) $codigo, $asuntos);
 

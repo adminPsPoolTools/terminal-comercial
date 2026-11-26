@@ -1,4 +1,5 @@
+{{-- La API filtra por CÓDIGO de población (buscarExpedientes, obtenerPresupuestosFichaCliente, obtenerListadoClientes) --}}
 <option value="">Todas</option>
 @foreach($poblaciones as $p)
-  <option value="{{ $p->POBLACION ?? $p->DESCRIPCION ?? '' }}">{{ $p->DESCRIPCION ?? $p->POBLACION ?? '' }}</option>
+  <option value="{{ $p->CODIGO ?? '' }}">{{ $p->DESCRIPCION ?? '' }}</option>
 @endforeach

@@ -90,8 +90,10 @@ Route::middleware('auth.comercial')->group(function () {
 
     // Listados
     Route::get('/listados',                 [ListadosController::class, 'index'])->name('listados.index');
-    Route::get('/listados/ventas-clientes', [ListadosController::class, 'ventasClientes'])->name('listados.ventas-clientes');
     Route::get('/listados/clientes',        [ListadosController::class, 'clientes'])->name('listados.clientes');
+    // ventas-clientes, ventas-secciones, clientes-nuevos, ... (ver ListadosController::LISTADOS)
+    Route::get('/listados/{tipo}',          [ListadosController::class, 'ver'])->name('listados.ver')
+        ->where('tipo', implode('|', array_keys(ListadosController::LISTADOS)));
 
     // Objetivos
     Route::get('/objetivos', [ObjetivosController::class, 'index'])->name('objetivos.index');

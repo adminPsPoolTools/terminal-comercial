@@ -3,7 +3,7 @@
 @else
 <div class="table-wrapper rounded-xl overflow-hidden">
   <table class="crm-table">
-    <thead><tr><th>Código</th><th>Fecha</th><th>Descripción</th><th>Estado</th><th>Cliente presup.</th><th>Cliente asig.</th><th>Comercial</th><th>Provincia</th></tr></thead>
+    <thead><tr><th>Código</th><th>Fecha</th><th>Descripción</th><th>Estado</th><th>Comercial</th></tr></thead>
     <tbody>
       @foreach($expedientes as $row)
         @if(!is_null($row->CODIGO ?? null))
@@ -12,10 +12,7 @@
           <td class="text-xs">{{ $row->FECHA_ALTA ?? '—' }}</td>
           <td class="max-w-xs truncate text-sm font-medium">{{ $row->DESCRIPCION ?? '—' }}</td>
           <td><span class="badge {{ str_contains(strtolower($row->ESTADO ?? ''), 'abiert') ? 'badge-green' : (str_contains(strtolower($row->ESTADO ?? ''), 'cerr') ? 'badge-gray' : 'badge-yellow') }}">{{ $row->ESTADO ?? '—' }}</span></td>
-          <td class="text-xs text-slate-600">{{ $row->DESCRIPCION_CLIENTE_PRESU ?? $row->CLIENTE_PRESU ?? '—' }}</td>
-          <td class="text-xs text-slate-600">{{ $row->DESCRIPCION_CLIENTE_ASIG ?? $row->CLIENTE_ASIG ?? '—' }}</td>
-          <td class="text-xs text-slate-500">{{ $row->NOMBRE_COMERCIAL ?? $row->COMERCIAL ?? '—' }}</td>
-          <td class="text-xs text-slate-500">{{ $row->PROVINCIA ?? '—' }}</td>
+          <td class="text-xs text-slate-500">{{ $vendedores[trim((string) ($row->COMERCIAL ?? ''))] ?? ($row->COMERCIAL ?? '—') }}</td>
         </tr>
         @endif
       @endforeach

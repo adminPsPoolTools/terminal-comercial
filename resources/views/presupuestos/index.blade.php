@@ -34,7 +34,7 @@
         <select id="sel-provincia" class="form-select" style="min-width:140px">
           <option value="">Todas</option>
           @foreach($provincias as $p)
-            <option value="{{ $p->PROVINCIA ?? $p->DESCRIPCION ?? '' }}">{{ $p->DESCRIPCION ?? $p->PROVINCIA ?? '' }}</option>
+            <option value="{{ $p->CODIGO ?? '' }}">{{ $p->DESCRIPCION ?? $p->PROVINCIA ?? '' }}</option>
           @endforeach
         </select>
       </div>

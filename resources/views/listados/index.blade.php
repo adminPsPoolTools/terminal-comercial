@@ -15,38 +15,33 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
     @php
-      $listados = [
-        // 'route' => null: listado del sistema antiguo aún sin endpoint/ruta migrada
-        ['id'=>'ventas-prov', 'label'=>'Ventas clientes por provincias', 'icon'=>'list', 'route'=>'listados.ventas-clientes'],
-        ['id'=>'ventas-secc', 'label'=>'Ventas artículos por secciones', 'icon'=>'package', 'route'=>null],
-        ['id'=>'clientes-nuevos', 'label'=>'Clientes nuevos', 'icon'=>'users', 'route'=>null],
-        ['id'=>'ventas-prov2', 'label'=>'Ventas por provincias', 'icon'=>'target', 'route'=>null],
-        ['id'=>'ranking-ventas', 'label'=>'Ranking ventas', 'icon'=>'dollar', 'route'=>null],
-        ['id'=>'ranking-visitas', 'label'=>'Ranking visitas comerciales', 'icon'=>'briefcase', 'route'=>null],
-        ['id'=>'control-visitas', 'label'=>'Control de visitas', 'icon'=>'calendar', 'route'=>null],
-        ['id'=>'facturas', 'label'=>'Facturas clientes', 'icon'=>'file-text', 'route'=>null],
-        ['id'=>'clientes-list', 'label'=>'Listado clientes', 'icon'=>'users', 'route'=>'listados.clientes'],
+      // Títulos y endpoints en ListadosController::LISTADOS
+      $iconos = [
+        'ventas-clientes' => 'list', 'ventas-secciones' => 'package', 'clientes-nuevos' => 'users',
+        'ventas-provincias' => 'target', 'ranking-ventas' => 'dollar', 'ranking-visitas' => 'briefcase',
+        'control-visitas' => 'calendar', 'facturas-clientes' => 'file-text',
       ];
+      $tarjetas = [];
+      foreach ($listados as $slug => $def) {
+        $tarjetas[] = ['label' => $def['titulo'], 'icon' => $iconos[$slug] ?? 'list', 'url' => route('listados.ver', $slug)];
+      }
+      $tarjetas[] = ['label' => 'Listado clientes', 'icon' => 'users', 'url' => route('listados.clientes')];
     @endphp
 
-    @foreach($listados as $l)
-    <div class="crm-card p-5 {{ $l['route'] ? 'hover:shadow-md transition-shadow' : 'opacity-60' }}">
+    @foreach($tarjetas as $l)
+    <div class="crm-card p-5 hover:shadow-md transition-shadow">
       <div class="flex items-start gap-3 mb-3">
         <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
           @include('partials.icon', ['name' => $l['icon']])
         </div>
         <h3 class="font-head font-semibold text-sm text-slate-800 leading-snug flex-1">{{ $l['label'] }}</h3>
       </div>
-      @if($l['route'])
       <div class="flex gap-2">
-        <button onclick="cargarListado('{{ route($l['route']) }}', 'mensual', this)"
+        <button onclick="cargarListado('{{ $l['url'] }}', 'mensual', this)"
                 class="btn btn-secondary btn-sm flex-1">Mensual</button>
-        <button onclick="cargarListado('{{ route($l['route']) }}', 'anual', this)"
+        <button onclick="cargarListado('{{ $l['url'] }}', 'anual', this)"
                 class="btn btn-secondary btn-sm flex-1">Anual</button>
       </div>
-      @else
-      <p class="text-xs text-slate-400">Pendiente de migrar del sistema antiguo.</p>
-      @endif
     </div>
     @endforeach
 

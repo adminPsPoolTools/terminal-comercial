@@ -24,8 +24,10 @@ class GastosController extends Controller
 
         $filtros = [
             'comercial'      => $comercial,
-            'fecha_desde'    => $this->fechaApi($request->input('fecha_desde'), '01/01/2000'),
-            'fecha_hasta'    => $this->fechaApi($request->input('fecha_hasta'), '31/12/2099'),
+            // La API lee fecha_gasto_desde / fecha_gasto_hasta (HG.FECHA BETWEEN ...);
+            // con otros nombres el BETWEEN recibe NULL y nunca devuelve gastos.
+            'fecha_gasto_desde' => $this->fechaApi($request->input('fecha_desde'), '01/01/2000'),
+            'fecha_gasto_hasta' => $this->fechaApi($request->input('fecha_hasta'), '31/12/2099'),
             'comentario'     => $request->input('comentario', ''),
             'tipo_gasto'     => $request->input('tipo_gasto', '0'),
             'medio_cobro'    => $request->input('medio_cobro', '0'),

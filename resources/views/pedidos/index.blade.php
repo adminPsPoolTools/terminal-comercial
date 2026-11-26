@@ -9,7 +9,7 @@
       <div class="filter-group w-full sm:w-auto"><label class="form-label">Estado</label>
         <select id="sel-estado" class="form-select" style="min-width:140px">
           <option value="">Todos</option>
-          @foreach($estados as $e)<option value="{{ $e->CODIGO ?? $e->DESCRIPCION ?? '' }}">{{ $e->DESCRIPCION ?? '' }}</option>@endforeach
+          @foreach($estados as $e)<option value="{{ trim($e->ESTADO ?? '') }}">{{ $e->ESTADO ?? '' }}</option>@endforeach
         </select></div>
       <div class="filter-group w-full sm:w-auto"><label class="form-label">Servido</label>
         <select id="sel-servido" class="form-select" style="min-width:170px">

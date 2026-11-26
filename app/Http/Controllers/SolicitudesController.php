@@ -61,6 +61,26 @@ class SolicitudesController extends Controller
     public function detalle(string $codigo)
     {
         $solicitud = $this->api->obtenerDetalleSolicitud($codigo);
+
+        // La API devuelve SELECT * FROM SOLICITUD_PRESUPUESTO: solo los códigos de
+        // carácter (CARACTER) y categoría (CATEGORIA_SOLICITUD); se traducen a descripción.
+        if ($solicitud) {
+            $buscar = function (array $lista, $cod) {
+                foreach ($lista as $o) {
+                    if ((string) ($o->CODIGO ?? '') === trim((string) $cod)) {
+                        return $o->DESCRIPCIONCATEGORIA ?? $o->DESCRIPCION ?? null;
+                    }
+                }
+                return null;
+            };
+            if (empty($solicitud->DESC_CARACTER) && isset($solicitud->CARACTER)) {
+                $solicitud->DESC_CARACTER = $buscar($this->api->obtenerCaracteresSolicitud(), $solicitud->CARACTER);
+            }
+            if (empty($solicitud->DESCRIPCIONCATEGORIA) && isset($solicitud->CATEGORIA_SOLICITUD)) {
+                $solicitud->DESCRIPCIONCATEGORIA = $buscar($this->api->obtenerCategoriasSolicitud(), $solicitud->CATEGORIA_SOLICITUD);
+            }
+        }
+
         return view('solicitudes.detalle', compact('solicitud', 'codigo'));
     }
 }

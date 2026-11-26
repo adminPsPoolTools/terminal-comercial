@@ -12,7 +12,8 @@ class IncidenciasController extends Controller {
         $filtros = [
             'comercial'   => $comercial,
             'fecha_desde' => $this->fechaApi($request->input('fecha_desde'), '01/01/2000'),
-            'estado'      => $request->input('estado', ''),
+            // La API añade "ESTADO LIKE :estado" salvo que reciba exactamente "Todos"
+            'estado'      => $request->filled('estado') ? $request->input('estado') : 'Todos',
         ];
         $incidencias = $this->api->buscarIncidenciasSat($filtros);
         return view('incidencias.list', compact('incidencias', 'comercial'));

@@ -26,7 +26,8 @@ class ExpedientesController extends Controller
         $filtros = [
             'cliente'         => '',
             'fecha_desde'     => $this->fechaApi($request->input('fecha_desde'), '01/01/2000'),
-            'descripcion'     => $request->input('descripcion', ''),
+            // La API compara UPPER(descripcion) LIKE '%texto%' sin pasar el texto a mayúsculas
+            'descripcion'     => mb_strtoupper(trim((string) $request->input('descripcion', ''))),
             'comercial'       => $comercial,
             'provincia'       => $request->input('provincia', ''),
             'poblacion'       => $request->input('poblacion', ''),
@@ -37,6 +38,15 @@ class ExpedientesController extends Controller
         ];
 
         $expedientes = $this->api->buscarExpedientes($filtros);
-        return view('expedientes.list', compact('expedientes', 'comercial'));
+
+        // La API devuelve solo el código del comercial: se traduce a nombre
+        $vendedores = [];
+        if (! empty($expedientes)) {
+            foreach ($this->api->obtenerVendedores() as $v) {
+                $vendedores[trim((string) ($v->CODIGO ?? ''))] = $v->NOMBRE ?? '';
+            }
+        }
+
+        return view('expedientes.list', compact('expedientes', 'comercial', 'vendedores'));
     }
 }

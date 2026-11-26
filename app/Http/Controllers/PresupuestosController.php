@@ -25,6 +25,8 @@ class PresupuestosController extends Controller
         $filtros = [
             'cliente'       => $request->input('cliente', ''),
             'fecha_desde'   => $this->fechaApi($request->input('fecha_desde'), date('01/01/Y')),
+            // La API filtra "fecha BETWEEN :fecha_desde AND :fecha_hasta": sin fecha_hasta no devuelve nada
+            'fecha_hasta'   => $this->fechaApi($request->input('fecha_hasta'), '31/12/2099'),
             'titulo'        => $request->input('titulo', ''),
             'estado'        => $request->input('estado', ''),
             'comercial'     => $comercial,

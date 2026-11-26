@@ -13,7 +13,7 @@
       <div class="filter-group w-full sm:w-auto"><label class="form-label">Provincia</label>
         <select id="sel-prov" class="form-select" style="min-width:130px">
           <option value="">Todas</option>
-          @foreach($provincias as $p)<option value="{{ $p->PROVINCIA ?? $p->DESCRIPCION ?? '' }}">{{ $p->DESCRIPCION ?? $p->PROVINCIA ?? '' }}</option>@endforeach
+          @foreach($provincias as $p)<option value="{{ $p->CODIGO ?? '' }}">{{ $p->DESCRIPCION ?? $p->PROVINCIA ?? '' }}</option>@endforeach
         </select></div>
       <div class="filter-group w-full sm:w-auto"><label class="form-label">Población</label>
         <select id="sel-pob" class="form-select" style="min-width:130px">

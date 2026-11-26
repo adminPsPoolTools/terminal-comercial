@@ -284,16 +284,31 @@ class ApiService
         return $this->normalizeItem($this->post('crearVisitaComercial', $datos));
     }
 
-    public function asignarAccionesVisita(string $codigo, string $acciones): bool
+    /** La API recorre "acciones" con foreach: debe enviarse como array (acciones[]=1&acciones[]=2). */
+    public function asignarAccionesVisita(string $codigo, array $acciones): bool
     {
-        $result = $this->post('asignarAccionesVisita', ['codigo' => $codigo, 'acciones' => $acciones]);
-        return $result !== null;
+        return $this->requestSuccessful('POST', $this->makeApiUrl('asignarAccionesVisita'), [
+            'codigo'   => $codigo,
+            'acciones' => array_values($acciones),
+        ]);
     }
 
-    public function asignarAsuntosVisita(string $codigo, string $asuntos): bool
+    /**
+     * La API recorre "asuntos" con foreach y espera cada elemento como "CODIGO-TIPO"
+     * (TIPO = SECCION | GRUPO | ASUNTO). Los asuntos de VISITASCOMERCIALES_ASUNTOS van como "CODIGO-ASUNTO".
+     * La API no devuelve cuerpo, por eso se comprueba solo el estado HTTP.
+     */
+    public function asignarAsuntosVisita(string $codigo, array $asuntos): bool
     {
-        $result = $this->post('asignarAsuntosVisita', ['codigo' => $codigo, 'asuntos' => $asuntos]);
-        return $result !== null;
+        $asuntos = array_map(
+            fn ($a) => str_contains((string) $a, '-') ? (string) $a : $a . '-ASUNTO',
+            array_values($asuntos)
+        );
+
+        return $this->requestSuccessful('POST', $this->makeApiUrl('asignarAsuntosVisita'), [
+            'codigo'  => $codigo,
+            'asuntos' => $asuntos,
+        ]);
     }
 
     public function obtenerDetalleVisita(string $codigo): ?object
@@ -386,19 +401,30 @@ class ApiService
         return $this->getArray('obtenerVendedoresTerminalComercial');
     }
 
-    public function listadoVentasClientes(array $filtros): array
-    {
-        return $this->getArray('obtenerListadoVentasClientes', $filtros);
-    }
-
     public function listadoClientes(array $filtros): array
     {
         return $this->getArray('obtenerListadoClientes', $filtros);
     }
 
-    public function listadoObjetivos(array $filtros): array
+    /**
+     * Listados de ListadosController de la API (obtenerVentasClientesProvincias,
+     * obtenerRankingVentas, ...). Todos reciben fecha_desde, fecha_hasta y comercial.
+     * Devuelve la respuesta sin normalizar porque algunos no son listas
+     * (obtenerVentasProvincias devuelve [filas, detalle], obtenerControlVisitas un objeto).
+     */
+    public function listado(string $endpoint, array $filtros): mixed
     {
-        return $this->getArray('obtenerListadoObjetivos', $filtros);
+        return $this->get($endpoint, $filtros);
+    }
+
+    /**
+     * Devuelve {mensual: [...], extra: {importeTotal, info: [...]}} o null si falla.
+     * Requiere fecha_desde, fecha_hasta y comercial (rellena tablas temporales con un procedimiento).
+     */
+    public function listadoObjetivos(array $filtros): ?object
+    {
+        $res = $this->get('obtenerListadoObjetivos', $filtros);
+        return is_object($res) ? $res : null;
     }
 
     public function getRH(string $path, array $params = []): mixed
